@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px;
             padding: 30px; background: linear-gradient(135deg, #1a1a2e, #16213e);
@@ -15,4 +15,216 @@
            text-decoration: none; border-radius: 6px;">Crime map</a>
     </div>
 </div>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SF Crime Story</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Georgia", serif;
+    line-height: 1.7;
+    color: #222;
+    background: #f8f8f8;
+}
+
+/* HERO SECTION */
+.hero {
+    height: 80vh;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)),
+                url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 20px;
+    color: #ddd;
+}
+
+/* CONTENT */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+.section {
+    margin-bottom: 80px;
+}
+
+.section h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.section p {
+    font-size: 18px;
+    color: #444;
+}
+
+/* CHART PLACEHOLDER */
+.chart {
+    margin: 30px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+/* BUTTON */
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #e63946;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+
+/* FULL WIDTH SECTION */
+.full-width {
+    width: 100%;
+    background: #111;
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.full-width h2 {
+    font-size: 36px;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #888;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <div>
+        <h1>20 Years of Crime in San Francisco</h1>
+        <p>A data story about how time, place, and behavior shape crime</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- INTRO -->
+    <div class="section">
+        <p>
+            Over the past two decades, San Francisco has changed dramatically.
+            But crime hasn’t simply increased or decreased — it has evolved.
+            Different crimes follow different patterns across time and space.
+        </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section">
+        <h2>The Big Picture</h2>
+        <p>
+            Looking at total crime over time reveals long-term trends,
+            but also masks important differences between crime types.
+        </p>
+
+        <div class="chart">
+            <!-- INSERT CHART -->
+            <p>[Line chart: total crimes over time]</p>
+        </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section">
+        <h2>Not All Crime is the Same</h2>
+        <p>
+            While some crimes decline, others rise. Each category tells
+            a different story about the city.
+        </p>
+
+        <div class="chart">
+            <p>[Stacked area chart: crime categories]</p>
+        </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section">
+        <h2>When Crime Happens</h2>
+        <p>
+            Crime follows a daily rhythm. Some offenses cluster at night,
+            while others occur during the day.
+        </p>
+
+        <div class="chart">
+            <p>[Heatmap: weekday × hour]</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- FULL WIDTH MAP SECTION -->
+<div class="full-width">
+    <h2>Where Crime Happens</h2>
+    <p>Explore crime across San Francisco neighborhoods</p>
+
+    <a href="plotly.html" class="button" target="_blank">
+        Open Interactive Crime Map
+    </a>
+</div>
+
+<div class="container">
+
+    <!-- SECTION 4 -->
+    <div class="section">
+        <h2>A Closer Look</h2>
+        <p>
+            Some crime types show surprising patterns when examined closely.
+            For example, vehicle theft has followed a different trajectory
+            than other crimes.
+        </p>
+
+        <div class="chart">
+            <p>[Deep dive chart]</p>
+        </div>
+    </div>
+
+    <!-- CONCLUSION -->
+    <div class="section">
+        <h2>Conclusion</h2>
+        <p>
+            Crime in San Francisco is not a single story, but many.
+            Understanding it requires looking at time, place, and type —
+            and how they interact.
+        </p>
+    </div>
+
+</div>
+
+<div class="footer">
+    Data source: San Francisco crime dataset (2003–2026)
+</div>
+
+</body>
 </html>
