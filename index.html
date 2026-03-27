@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -66,13 +66,22 @@
       background-size: 120px 4px;
     }
 
+    .masthead-institution {
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: #554e46;
+      margin-bottom: .55rem;
+    }
+
     .masthead-eyebrow {
       font-family: var(--mono);
       font-size: .72rem;
       letter-spacing: .25em;
       text-transform: uppercase;
       color: var(--accent-gold);
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
 
     .masthead-title {
@@ -94,25 +103,28 @@
       font-size: 1.05rem;
       font-weight: 300;
       color: #b0a898;
-      max-width: 520px;
+      max-width: 540px;
       margin: 0 auto 1.8rem;
     }
 
     .masthead-meta {
       font-family: var(--mono);
-      font-size: .7rem;
-      letter-spacing: .12em;
+      font-size: .68rem;
+      letter-spacing: .1em;
       text-transform: uppercase;
       color: #776e63;
       border-top: 1px solid #2a2825;
       padding-top: 1rem;
       display: flex;
       justify-content: center;
-      gap: 2.5rem;
+      align-items: center;
+      gap: 1.8rem;
       flex-wrap: wrap;
     }
 
-    .masthead-meta span b { color: #c8bfad; }
+    .masthead-meta .divider { color: #2a2825; }
+    .masthead-meta .author-name { color: #c8bfad; }
+    .masthead-meta .student-num { color: #554e46; }
 
     /* ── Page layout ────────────────────────────────────────────── */
     .page-wrap {
@@ -127,7 +139,6 @@
       align-items: center;
       gap: 1rem;
       margin: 3rem 0 2.5rem;
-      color: var(--rule);
     }
     .ornament::before, .ornament::after {
       content: ''; flex: 1; height: 1px; background: var(--rule);
@@ -174,12 +185,9 @@
       margin: 0 auto;
     }
 
-    .prose p {
-      margin-bottom: 1.4rem;
-      color: #1e1c19;
-    }
+    .prose p { margin-bottom: 1.4rem; color: #1e1c19; }
+    .prose a { color: var(--accent); }
 
-    /* Drop cap on first paragraph of article */
     .drop-cap::first-letter {
       font-family: var(--serif);
       font-size: 4.5em;
@@ -214,7 +222,7 @@
       font-family: var(--serif);
     }
 
-    /* ── Data callout numbers ───────────────────────────────────── */
+    /* ── Stat strip ─────────────────────────────────────────────── */
     .stat-strip {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -246,22 +254,9 @@
       display: block;
     }
 
-    /* ── Figure / visualization containers ─────────────────────── */
-    .figure-wrap {
-      margin: 3.5rem 0;
-    }
+    /* ── Figure containers ──────────────────────────────────────── */
+    .figure-wrap { margin: 3.5rem 0; }
 
-    .figure-number {
-      font-family: var(--mono);
-      font-size: .65rem;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: .5rem;
-      display: block;
-    }
-
-    /* Static image placeholder */
     .fig-static {
       width: 100%;
       aspect-ratio: 16/9;
@@ -274,8 +269,6 @@
       position: relative;
       overflow: hidden;
     }
-
-    /* Decorative grid lines on placeholder */
     .fig-static::before {
       content: '';
       position: absolute; inset: 0;
@@ -285,41 +278,27 @@
       background-size: 40px 40px;
       opacity: .35;
     }
-
-    .fig-placeholder-icon {
-      font-size: 2.5rem;
-      margin-bottom: .8rem;
-      position: relative;
-    }
-
+    .fig-placeholder-icon  { font-size: 2.5rem; margin-bottom: .8rem; position: relative; }
     .fig-placeholder-title {
-      font-family: var(--serif);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--ink);
-      position: relative;
-      text-align: center;
-      margin-bottom: .4rem;
+      font-family: var(--serif); font-size: 1.1rem; font-weight: 700;
+      color: var(--ink); position: relative; text-align: center; margin-bottom: .4rem;
+    }
+    .fig-placeholder-hint  {
+      font-family: var(--mono); font-size: .68rem; letter-spacing: .08em;
+      color: var(--muted); position: relative; text-align: center;
     }
 
-    .fig-placeholder-hint {
-      font-family: var(--mono);
-      font-size: .68rem;
-      letter-spacing: .08em;
-      color: var(--muted);
-      position: relative;
-      text-align: center;
+    .fig-img {
+      width: 100%;
+      display: block;
+      border: 1px solid var(--rule);
     }
 
-    /* Map placeholder — taller */
-    .fig-map {
-      aspect-ratio: 4/3;
-    }
+    .fig-map { aspect-ratio: 4/3; }
 
-    /* Iframe for interactive plots */
     .fig-iframe {
       width: 100%;
-      height: 520px;
+      height: 560px;
       border: 1px solid var(--rule);
       background: var(--paper-mid);
       display: block;
@@ -334,14 +313,8 @@
       color: var(--muted);
       line-height: 1.55;
     }
+    .fig-caption b { font-style: normal; font-weight: 600; color: var(--ink); }
 
-    .fig-caption b {
-      font-style: normal;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    /* Badge for chart type */
     .chart-badge {
       display: inline-block;
       font-family: var(--mono);
@@ -353,29 +326,25 @@
       padding: .25em .6em;
       margin-bottom: .6rem;
     }
-    .chart-badge.badge-map    { background: #1a4a6e; }
+    .chart-badge.badge-map         { background: #1a4a6e; }
     .chart-badge.badge-interactive { background: #2d6a4f; }
-    .chart-badge.badge-static { background: var(--accent-dk); }
+    .chart-badge.badge-static      { background: var(--accent-dk); }
 
-    /* ── Colour swatch reference ─────────────────────────────────── */
-    .color-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem 1.2rem;
-      margin: 1.5rem 0;
-    }
-    .color-swatch {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      font-size: .8rem;
+    /* ── Dev note (plot idea box) ────────────────────────────────── */
+    .dev-note {
+      background: #1a1917;
+      border-left: 3px solid var(--accent-gold);
+      padding: 1rem 1.4rem;
+      margin-bottom: .8rem;
       font-family: var(--mono);
+      font-size: .72rem;
+      line-height: 1.65;
+      color: #a09080;
     }
-    .swatch-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .dev-note strong { color: var(--accent-gold); display: block; margin-bottom: .5rem; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; }
+    .dev-note code   { color: #d4c5a0; background: #2a2825; padding: .1em .35em; border-radius: 2px; }
+    .dev-note ul     { padding-left: 1.2rem; margin-top: .4rem; }
+    .dev-note li     { margin-bottom: .2rem; }
 
     /* ── References ──────────────────────────────────────────────── */
     .references {
@@ -385,18 +354,11 @@
       margin-top: 4rem;
     }
     .references h3 {
-      font-family: var(--serif);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      margin-bottom: 1.2rem;
+      font-family: var(--serif); font-size: 1rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1.2rem;
     }
     .references ol {
-      padding-left: 1.2rem;
-      font-size: .85rem;
-      color: var(--muted);
-      line-height: 1.7;
+      padding-left: 1.2rem; font-size: .85rem; color: var(--muted); line-height: 1.7;
     }
     .references ol li { margin-bottom: .5rem; }
     .references a { color: var(--accent); text-decoration: underline; }
@@ -406,40 +368,38 @@
       background: var(--ink);
       color: #776e63;
       text-align: center;
-      padding: 2rem;
+      padding: 1.8rem 2rem;
       font-family: var(--mono);
       font-size: .68rem;
       letter-spacing: .1em;
       text-transform: uppercase;
+      line-height: 2;
     }
+    footer a { color: #554e46; text-decoration: none; }
 
     /* ── Animations ──────────────────────────────────────────────── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    .masthead-institution { animation: fadeUp .5s ease both; }
+    .masthead-eyebrow     { animation: fadeUp .6s .06s ease both; }
+    .masthead-title       { animation: fadeUp .7s .12s ease both; }
+    .masthead-sub         { animation: fadeUp .7s .22s ease both; }
+    .masthead-meta        { animation: fadeUp .7s .32s ease both; }
 
-    .masthead-title  { animation: fadeUp .7s ease both; }
-    .masthead-sub    { animation: fadeUp .7s .12s ease both; }
-    .masthead-meta   { animation: fadeUp .7s .22s ease both; }
-
-    /* Scroll-reveal via Intersection Observer */
     .reveal {
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 0; transform: translateY(20px);
       transition: opacity .6s ease, transform .6s ease;
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
+    .reveal.visible { opacity: 1; transform: none; }
 
     /* ── Responsive ──────────────────────────────────────────────── */
     @media (max-width: 600px) {
       body { font-size: 16px; }
       .page-wrap { padding: 0 1.2rem; }
       .stat-strip { grid-template-columns: 1fr 1fr; }
-      .fig-iframe { height: 380px; }
+      .fig-iframe { height: 400px; }
     }
   </style>
 </head>
@@ -449,18 +409,24 @@
        MASTHEAD
   ═══════════════════════════════════════════════════════════════ -->
   <header class="masthead">
+    <p class="masthead-institution">Technical University of Denmark (DTU) &nbsp;·&nbsp; Social Data Analysis and Visualization</p>
     <p class="masthead-eyebrow">Data Investigation · San Francisco Crime 2003–2025</p>
     <h1 class="masthead-title">
-      After Dark:<br><em>Who Pays the Price</em><br>in San Francisco?
+      Crime by the Clock:<br><em>When San Francisco</em><br>Is Most Dangerous
     </h1>
     <p class="masthead-sub">
-      Two decades of police data reveal how crime ebbs and flows with the city's rhythms — and who bears the heaviest burden when night falls.
+      Over two decades of police data reveal that crime in San Francisco follows a precise daily rhythm — and the hour you step outside matters more than you might think.
     </p>
     <div class="masthead-meta">
-      <span><b>Source</b> SF Open Data / DataSF</span>
-      <span><b>Period</b> Jan 2003 – Dec 2025</span>
-      <span><b>Incidents</b> ~1.4 M records</span>
-      <span><b>Categories</b> 8 crime types</span>
+      <span>
+        <span class="author-name">Egill Bjarni Gíslason</span>
+        <span class="student-num">&nbsp;(s252929)</span>
+      </span>
+      <span class="divider">·</span>
+      <span>
+        <span class="author-name">Hlynur Blær Sigurðsson</span>
+        <span class="student-num">&nbsp;(s253095)</span>
+      </span>
     </div>
   </header>
 
@@ -478,11 +444,11 @@
         <h2>San Francisco by the numbers</h2>
 
         <p class="drop-cap">
-          This is a story about crime in San Francisco ... . This is done as part of the Social Data Analysis and Visualization course at DTU. The data comes from the San Francisco Police Department's public incident reports, accessed via the DataSF Open Data Portal. It includes over 1.6 million reported incidents across eight chosen crime categories, spanning from January 2003 to December 2025. Each record contains details such as the type of crime, the date and time it occurred, and the police district where it was reported.
+          [PLACEHOLDER — Introduce the dataset. The data comes from the San Francisco Police Department's public incident reports, published via <a href="https://data.sfgov.org" target="_blank">DataSF</a>. The dataset covers 2003–2025 and contains eight crime categories: Assault, Fraud, Burglary, Vandalism, Larceny-theft, Vehicle Theft, Drug Offense, and Arson. Explain in one sentence why these particular categories were selected — they represent the "personal focus crimes" tracked consistently by SFPD across the entire 22-year period.]
         </p>
 
         <p>
-          [PLACEHOLDER — Briefly frame the stakes. San Francisco is one of the most data-transparent cities in the US. With over a million reported incidents spanning two decades, the dataset captures the city's turbulent highs — the tech booms, the pandemic lockdowns, the homelessness crisis — through the lens of crime. One or two sentences on why crime data matters as a proxy for urban health.]
+          [PLACEHOLDER — Frame the central question: Does the time of day you are out on the streets of San Francisco change how safe you are? The answer, as this analysis shows, is a resounding yes — but the story is more nuanced than simply "night is dangerous." Different crimes peak at radically different hours, and knowing the pattern reveals something meaningful about the social forces driving each type of offense.]
         </p>
       </div>
 
@@ -493,211 +459,219 @@
           <span class="label">Total Incidents</span>
         </div>
         <div class="stat-box">
-          <span class="num">#1</span>
-          <span class="label">Larceny-theft</span>
+          <span class="num">22 yrs</span>
+          <span class="label">2003 – 2025</span>
         </div>
         <div class="stat-box">
-          <span class="num">23 yrs</span>
-          <span class="label">Data Span</span>
+          <span class="num">8</span>
+          <span class="label">Crime Categories</span>
         </div>
         <div class="stat-box">
           <span class="num">10+</span>
-          <span class="label">Districts Covered</span>
+          <span class="label">Police Districts</span>
         </div>
       </div>
 
 
       <!-- ══ SECTION 1 ══════════════════════════════════════════ -->
-      <div class="ornament reveal"><span class="ornament-inner">Section 01 · The Rhythm</span></div>
+      <div class="ornament reveal"><span class="ornament-inner">Section 01 · The Shape of the Day</span></div>
 
       <div class="prose reveal">
-        <span class="section-label">When does crime happen?</span>
-        <h2>A city of two shifts</h2>
+        <span class="section-label">What the distributions reveal</span>
+        <h2>Not all crimes keep the same hours</h2>
 
         <p>
-          [PLACEHOLDER — Introduce the central finding: San Francisco's crime landscape splits neatly along the clock. Petty theft (Larceny-theft) dominates daytime hours — peaking between 11am and 3pm, when foot traffic is highest in commercial districts. But as the sun sets, the character of crime shifts. Assault and Vandalism surge after 9pm, reaching their peak between midnight and 2am. This "two-shift" pattern holds consistently across all 23 years of data.]
+          [PLACEHOLDER — Introduce the violin plot's main finding. Each crime category has a distinct "daily fingerprint." Larceny-theft — the city's most common crime by far — is concentrated in the midday and early afternoon, when commercial streets and transit hubs are at their busiest. Assault, by contrast, is overwhelmingly a late-night phenomenon, with its distribution peaking between midnight and 2am. Drug offenses show the flattest, most uniform spread across the day, suggesting they are less tied to routine activity patterns than other crime types.]
         </p>
 
         <p>
-          [PLACEHOLDER — 1–2 sentences connecting to the reader's lived experience: tourists having pockets picked on Market Street at noon vs. the different dangers of walking through the Tenderloin after midnight.]
+          [PLACEHOLDER — Note the most surprising finding from the violin plot. Arson has a striking secondary peak in the early morning hours (around 2–4am) that no other crime shares — a pattern consistent with deliberate, premeditated incidents carried out when streets are empty and detection is least likely. Vehicle theft similarly skews toward late night and early morning, when cars sit unattended for hours at a stretch.]
         </p>
 
         <div class="pull-quote">
-          Larceny-theft — the city's most common crime — is overwhelmingly a daytime phenomenon. Assault is overwhelmingly a crime of the night.
+          Larceny-theft is a crime of the lunch hour. Assault is a crime of last call. The two rarely share the same clock.
         </div>
 
         <p>
-          [PLACEHOLDER — Lead the reader into the first visualization. Explain what to look for: the divergence between the warm-colored (daytime) crimes and the cool-colored (nighttime) crimes. One sentence is enough to prime the reader before they see the chart.]
+          [PLACEHOLDER — Lead the reader into Figure 1. Describe what a violin plot shows for a reader who may not be familiar with the format: the width of the shape at any given hour represents how many incidents occurred at that time, averaged across 2003–2025. The wider the violin at a particular hour, the more incidents were recorded then.]
         </p>
       </div>
 
-      <!-- ── FIGURE 1 · STATIC CHART ─────────────────────────── -->
+      <!-- ── FIGURE 1 · STATIC VIOLIN PLOT ──────────────────────── -->
       <div class="figure-wrap reveal">
         <span class="chart-badge badge-static">Fig. 1 · Static Chart</span>
 
-        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
-          TYPE: Polar bar chart (clock chart) OR overlapping area chart
-
-          RECOMMENDED: A polar bar chart with 24 "hour" wedges, one ring
-          per crime category, showing normalized incident share.
-          Alternatively, a single multi-line chart with hour (0–23) on
-          the x-axis showing each crime category as a line, clearly
-          revealing the bimodal (daytime vs. night) split.
-
-          COLOR SCHEME: Use the same palette throughout all figures.
-          E.g. Larceny-theft → deep navy, Assault → red,
-               Drug Offense → purple, Vehicle Theft → teal.
-
-          WHAT TO HIGHLIGHT:
-            • Larceny-theft peaks sharply around noon–2pm
-            • Assault/Vandalism peak at midnight–2am
-            • Drug offenses are evenly distributed (no clear peak)
-            • Arson has a peculiar 2–4am spike
-
-          EXPORT: plt.savefig('fig1_hourly_crimes.svg', dpi=150,
-                              bbox_inches='tight', facecolor='#f5f0e8')
-        ──────────────────────────────────────────────────────────── -->
-
-        <div class="fig-static">
-          <span class="fig-placeholder-icon">🕐</span>
-          <p class="fig-placeholder-title">Hourly Crime Distribution by Category</p>
-          <p class="fig-placeholder-hint">Replace with fig1_hourly_crimes.svg / .png</p>
+        <img
+          src="Visualizations/timeofdaydist.png"
+          alt="Violin plot showing the distribution of crime incidents by hour of day for each of the eight crime categories in San Francisco, 2003–2025."
+          class="fig-img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <!-- Fallback if image path is wrong -->
+        <div class="fig-static" style="display:none;">
+          <span class="fig-placeholder-icon">🎻</span>
+          <p class="fig-placeholder-title">Violin Plot · Time-of-Day Distribution by Crime Category</p>
+          <p class="fig-placeholder-hint">Image not found · expected at Visualizations/timeofdaydist.png</p>
         </div>
 
         <p class="fig-caption">
-          <b>Figure 1 · The clock of crime.</b>
-          [CAPTION PLACEHOLDER — Each line shows one crime category's share of daily incidents by hour of the day, averaged across 2003–2026. Notice how Larceny-theft (dark navy) dominates the midday hours — when commercial streets are busiest — while Assault (red) spikes sharply after midnight. The divergence between these two lines illustrates San Francisco's "two-shift" crime pattern: opportunistic theft by day, violence by night. Drug Offense (purple) is the exception, spread almost uniformly across the 24-hour cycle.]
+          <b>Figure 1 · The daily fingerprint of crime.</b>
+          [CAPTION PLACEHOLDER — Each violin shows the distribution of incidents across the 24-hour day for one crime category, aggregated across all 22 years (2003–2025). The width of the violin at any given hour is proportional to the number of incidents recorded at that time. Notice how Larceny-theft (the city's most common crime) is concentrated in the midday hours — a daytime, opportunity-driven pattern closely tied to foot traffic in commercial areas. Assault clusters sharply in the late-night window past midnight. Arson stands out with a distinctive pre-dawn peak (2–4am), consistent with deliberate acts carried out when streets are empty and the chance of being seen is lowest.]
         </p>
       </div>
+
 
       <!-- ══ SECTION 2 ══════════════════════════════════════════ -->
-      <div class="ornament reveal"><span class="ornament-inner">Section 02 · The Map</span></div>
+      <div class="ornament reveal"><span class="ornament-inner">Section 02 · The Map in Motion</span></div>
 
       <div class="prose reveal">
-        <span class="section-label">Where does crime concentrate?</span>
-        <h2>Not all neighborhoods are equal</h2>
+        <span class="section-label">Where does the clock meet the map?</span>
+        <h2>The city transforms hour by hour</h2>
 
         <p>
-          [PLACEHOLDER — Introduce geographic inequality. The Tenderloin, Mission, and Southern districts consistently appear at the top of every crime ranking. But the story isn't simply "bad neighborhoods." The Southern district's high numbers partly reflect the density of SoMa — tech offices, bars, and transit hubs. The Tenderloin reflects decades of under-investment and concentrated poverty. Frame for the reader: the map is not just a crime map, it's a map of the city's unresolved tensions.]
+          [PLACEHOLDER — Introduce the geographic dimension of the time-of-day story. It is not just which crimes happen at different hours — it is also where they happen. The Financial District is a hotspot for Larceny-theft between 10am and 3pm, when office workers and tourists crowd the sidewalks and transit stations, but it empties of crime almost entirely after dark. The Tenderloin, by contrast, sees elevated activity around the clock, with Assault and Drug Offense incidents distributed throughout the day and night alike.]
         </p>
 
         <p>
-          [PLACEHOLDER — Mention one counterintuitive finding from the map, e.g.: "Despite its reputation, the Richmond district records some of the city's lowest per-capita crime rates — a finding that challenges the perception of uniform danger across San Francisco."]
+          [PLACEHOLDER — Describe how to use the interactive map. The reader can select any hour of the day using the slider, and filter by crime category using the dropdown. This lets them "watch" the city's crime geography shift as the day progresses — from the Financial District larceny hotspot at noon, to the Mission and Tenderloin assault clusters that dominate after midnight. Encourage the reader to try a specific comparison, e.g. Larceny-theft at 1pm vs. Assault at 1am.]
         </p>
       </div>
 
-      <!-- ── FIGURE 2 · MAP ──────────────────────────────────── -->
+      <!-- ── FIGURE 2 · INTERACTIVE MAP ─────────────────────────── -->
       <div class="figure-wrap reveal">
-        <span class="chart-badge badge-map">Fig. 2 · Map</span>
+        <span class="chart-badge badge-map">Fig. 2 · Interactive Map</span>
 
-        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
-          OPTION A (recommended): Folium HeatMap — all incidents
-          plotted as a continuous heat layer over a CartoDB Positron
-          basemap. Color scale: light yellow → deep red.
-          Export: m.save('fig2_heatmap.html')
-          Embed: <iframe src="fig2_heatmap.html"> in place of the
-          placeholder below.
-
-          OPTION B: Plotly Choropleth — fill each Police District
-          polygon by total crime count (or rate per 1000 residents).
-          Use SF district GeoJSON (available on DataSF).
-          Hover shows district name, top crime, total count.
-          Color: sequential scale matching the palette.
-          Export: fig.write_html('fig2_choropleth.html')
-
-          WHAT TO HIGHLIGHT:
-            • Southern / Mission / Tenderloin as hotspots
-            • Richmond / Ingleside as low-crime outliers
-            • The Financial District as a daytime-only hotspot
-              (high larceny, low assault)
-
-          EMBED: swap the .fig-static div below for:
-          <iframe src="fig2_heatmap.html" class="fig-iframe"></iframe>
-        ──────────────────────────────────────────────────────────── -->
-
-        <div class="fig-static fig-map">
-          <span class="fig-placeholder-icon">🗺️</span>
-          <p class="fig-placeholder-title">Crime Density Heatmap · San Francisco</p>
-          <p class="fig-placeholder-hint">Replace with &lt;iframe src="fig2_heatmap.html"&gt;</p>
-        </div>
+        <iframe
+          src="Visualizations/plotly.html"
+          class="fig-iframe"
+          frameborder="0"
+          title="Interactive map of San Francisco crime by hour of day and crime category, 2003–2025"
+        ></iframe>
 
         <p class="fig-caption">
-          <b>Figure 2 · The geography of risk.</b>
-          [CAPTION PLACEHOLDER — The heatmap plots over [X] incidents recorded between 2003 and 2026. Brighter zones indicate higher incident density. The Tenderloin (central), Mission (east), and SoMa (south-east of downtown) form a near-continuous corridor of concentrated crime. By contrast, the western residential neighborhoods — Sunset, Richmond, and the Outer Avenues — remain comparatively quiet throughout the entire period. This geographic persistence, stable across two decades, suggests structural rather than cyclical causes.]
+          <b>Figure 2 · Crime across the city, hour by hour.</b>
+          [CAPTION PLACEHOLDER — This interactive map plots incident locations recorded across San Francisco between 2003 and 2025. Use the time-of-day slider to step through the 24-hour cycle, and the category dropdown to focus on a specific crime type. Each point represents a cluster of incidents recorded at that hour. The map reveals that crime is far from evenly distributed: the Tenderloin and Mission districts remain persistently active regardless of the hour, while the Financial District and Union Square show a stark daytime-only pattern driven almost entirely by Larceny-theft. Select "Larceny-theft" at noon, then switch to "Assault" at 1am to see the two-shift pattern play out geographically.]
         </p>
       </div>
 
 
       <!-- ══ SECTION 3 ══════════════════════════════════════════ -->
-      <div class="ornament reveal"><span class="ornament-inner">Section 03 · The Long Arc</span></div>
+      <div class="ornament reveal"><span class="ornament-inner">Section 03 · The Bigger Picture</span></div>
 
       <div class="prose reveal">
-        <span class="section-label">How has crime evolved over 23 years?</span>
-        <h2>Shocks, shifts, and a city in flux</h2>
+        <span class="section-label">How the pattern holds across 22 years</span>
+        <h2>A rhythm that outlasts pandemics, booms, and policy shifts</h2>
 
         <p>
-          [PLACEHOLDER — Introduce the long-term narrative. Three major shocks reshape the trend lines: (1) the 2008 financial crisis, which correlates with a modest uptick in property crime; (2) the post-2015 tech-boom gentrification, which reshapes which neighborhoods see crime; and (3) the COVID-19 pandemic (2020), which causes the single most dramatic single-year drop in reported crime across almost every category. Explore with the reader which crimes rebounded post-COVID and which didn't.]
+          [PLACEHOLDER — Introduce the third visualization. The time-of-day fingerprint from Sections 1 and 2 is not a recent phenomenon — it has been a defining feature of SF crime across the entire 22-year period. But the shape of the daily distribution has not been perfectly static. The COVID-19 lockdowns of 2020 compressed crime into a narrower band of hours: nightlife shut down, commuting stopped, and the late-night Assault peak shrank dramatically. The post-pandemic rebound saw nighttime crime recover faster than its daytime counterpart. This chart lets the reader explore how each crime category's hourly profile shifted year by year.]
         </p>
 
         <p>
-          [PLACEHOLDER — Drug offenses deserve special attention. The long-term decline from ~XXXX per year in 2008 to ~XXXX in 2023 tracks closely with California's marijuana decriminalization (Prop 19, 2010) and full legalization (Prop 64, 2016). This is a case where policy visibly bends a crime trend — one of the cleanest cause-and-effect stories in the entire dataset.]
+          [PLACEHOLDER — Note a policy-linked shift if visible. Drug offenses declined sharply after California's Proposition 64 legalized cannabis in 2016 — and the decline was especially pronounced in the evening hours, when street-level drug markets had historically been most active. The clock chart makes this change visible as the shape of the Drug Offense ring narrows and loses its evening peak after 2016.]
         </p>
 
         <div class="pull-quote">
-          The pandemic was, paradoxically, the safest year on San Francisco's streets in over a decade — with one striking exception.
+          The pandemic compressed San Francisco's crime into tighter hours. The nighttime didn't just get quieter — it got emptier.
         </div>
 
         <p>
-          [PLACEHOLDER — Tease the exception: Vehicle theft and Burglary spiked during lockdowns, as empty offices and parked cars made easy targets. Invite the reader to explore this in the interactive chart below.]
+          [PLACEHOLDER — Guide the reader into Figure 3. Explain how to use the polar clock: select a crime category from the dropdown, then press Play to watch the 24-hour shape animate year by year. A perfectly round clock means crime is evenly spread across all hours; a lopsided shape reveals a strong time-of-day preference.]
         </p>
       </div>
 
-      <!-- ── FIGURE 3 · INTERACTIVE ──────────────────────────── -->
+      <!-- ── FIGURE 3 · INTERACTIVE PLOTLY ─────────────────────── -->
       <div class="figure-wrap reveal">
         <span class="chart-badge badge-interactive">Fig. 3 · Interactive Plotly</span>
 
-        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
-          TYPE: Animated bump chart OR indexed line chart
+        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          💡 PLOT IDEA — Animated 24-hour polar clock chart
+          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-          RECOMMENDED: A Plotly line chart showing annual crime counts
-          for all 8 categories (2003–2026), with:
-            • A range slider at the bottom to zoom into any period
-            • Click-to-highlight individual crime lines
-            • Vertical "event" annotations:
-                2008 → "Financial Crisis"
-                2016 → "Prop 64 (Cannabis)"
-                2020 → "COVID Lockdown"
-                2022 → "Post-pandemic rebound"
-            • Hover tooltip showing exact count, year, % vs previous year
+          TYPE: go.Barpolar — a "clock" where each of the 24 wedges
+          represents one hour and bar length encodes incident count.
 
-          WHY THIS IS DIFFERENT from Week 6 exercises:
-            → Normalize to INDEX (2003 = 100) so all categories are
-              comparable on the same y-axis scale. This lets the reader
-              directly compare the relative change across crimes that
-              differ by an order of magnitude (Arson ~100/yr vs
-              Larceny-theft ~30,000/yr).
+          WHY IT'S DIFFERENT FROM A STANDARD BAR CHART:
+            • Circular layout makes the 24-hour cycle immediately
+              intuitive (midnight at top, noon at bottom).
+            • Animation by year lets the reader watch the hourly
+              "shape" change over 22 years — not just total volume.
+            • Can show all 8 categories in one chart via dropdown,
+              which a standard bar chart handles awkwardly.
 
-          ALTERNATIVE: Plotly animated scatter: each bubble = 1 crime
-          category, x = drug offenses (proxy for social disorder),
-          y = assaults, bubble size = total crime, animated by year.
+          CONTROLS:
+            • Crime category DROPDOWN (updatemenus) — switches
+              between Assault, Larceny-theft, Burglary, etc.
+            • PLAY / PAUSE buttons — animates 2003 → 2025,
+              one frame per year, redrawing the polar bars.
+            • Hover tooltip: "Hour 14:00–15:00 · 2019 · 842 incidents"
 
-          EXPORT: fig.write_html('fig3_interactive.html',
-                                  include_plotlyjs='cdn')
-          EMBED: <iframe src="fig3_interactive.html" class="fig-iframe">
-        ──────────────────────────────────────────────────────────── -->
+          WHAT TO NOTICE:
+            • Larceny-theft: stable noon spike across all 22 years.
+            • Assault in 2020: late-night wedges (10pm–3am) shrink
+              dramatically, then recover by 2022–2023.
+            • Drug Offense: near-perfect circle in 2005 (all hours
+              equal) → night-heavy skew by 2023 as street markets
+              concentrated into fewer hours post-legalisation.
+            • Arson: small pre-dawn spike visible year-round.
 
-        <!-- Swap this iframe src once the file is exported -->
-        <div class="fig-static" style="aspect-ratio: 16/8;">
-          <span class="fig-placeholder-icon">📈</span>
-          <p class="fig-placeholder-title">Interactive: Crime Trends 2003–2026 (Index: 2003 = 100)</p>
-          <p class="fig-placeholder-hint">Replace with &lt;iframe src="fig3_interactive.html" class="fig-iframe"&gt;</p>
+          PYTHON SKETCH:
+          ────────────────────────────────────────────────────
+          import plotly.graph_objects as go
+
+          CRIME_COLORS = {
+              'Assault': '#E63946', 'Fraud': '#457B9D',
+              'Burglary': '#F4A261', 'Vandalism': '#A8DADC',
+              'Larceny-theft': '#1D3557', 'Vehicle Theft': '#2A9D8F',
+              'Drug Offense': '#8338EC', 'Arson': '#FB5607',
+          }
+          theta = [f"{h:02d}:00" for h in range(24)]
+          years = sorted(df['Year'].unique())  # 2003–2025
+
+          def make_barpolar(cat, year):
+              counts = (df[(df['Crime Category']==cat) & (df['Year']==year)]
+                          .groupby('HourOfDay').size()
+                          .reindex(range(24), fill_value=0))
+              return go.Barpolar(
+                  r=counts.values, theta=theta,
+                  marker_color=CRIME_COLORS[cat],
+                  marker_line_color='white', marker_line_width=1,
+                  opacity=0.85, name=cat
+              )
+
+          init_cat = 'Larceny-theft'
+          frames = [go.Frame(data=[make_barpolar(init_cat, y)],
+                             name=str(y)) for y in years]
+          fig = go.Figure(data=[make_barpolar(init_cat, years[0])],
+                          frames=frames)
+
+          # Add updatemenus: category dropdown + play/pause buttons
+          # fig.write_html('Visualizations/fig3_clockchart.html',
+          #                include_plotlyjs='cdn')
+          ────────────────────────────────────────────────────
+
+          Once exported, swap the placeholder div below for:
+          <iframe src="Visualizations/fig3_clockchart.html"
+                  class="fig-iframe" frameborder="0"></iframe>
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+
+        <div class="dev-note">
+          <strong>Developer note · Fig. 3 placeholder</strong>
+          Suggested visualization: <b>Animated 24-hour polar bar chart</b> (go.Barpolar).<br>
+          Controls: crime category <code>dropdown</code> + <code>Play/Pause</code> animation by year (2003–2025).<br>
+          Export: <code>fig.write_html('Visualizations/fig3_clockchart.html', include_plotlyjs='cdn')</code><br>
+          Embed: replace this block with <code>&lt;iframe src="Visualizations/fig3_clockchart.html" class="fig-iframe"&gt;</code>
         </div>
-        <!-- Once ready, use this instead: -->
-        <!-- <iframe src="fig3_interactive.html" class="fig-iframe" frameborder="0"></iframe> -->
+
+        <!-- Replace this div with the iframe once the file is ready -->
+        <div class="fig-static" style="aspect-ratio:16/9;">
+          <span class="fig-placeholder-icon">🕐</span>
+          <p class="fig-placeholder-title">Interactive Polar Clock · Hourly Crime Profile Animated by Year</p>
+          <p class="fig-placeholder-hint">See dev note above · Visualizations/fig3_clockchart.html</p>
+        </div>
 
         <p class="fig-caption">
-          <b>Figure 3 · Twenty-three years, eight stories.</b>
-          [CAPTION PLACEHOLDER — Each line shows annual incident counts for one crime category, indexed so that 2003 = 100 (making categories of very different scale directly comparable). Click a category name in the legend to isolate its trend. Use the range slider to zoom into specific periods. Three moments stand out: the slow decline in Drug Offenses following cannabis legalization (accelerating after 2016); the sharp COVID dip across almost all categories in 2020; and the divergence of Vehicle Theft, which uniquely spiked during lockdown as empty streets left cars unattended for days at a time.]
+          <b>Figure 3 · The 24-hour clock of crime, animated.</b>
+          [CAPTION PLACEHOLDER — This polar bar chart arranges the 24 hours of the day in a clockface: midnight at the top, noon at the bottom. Each wedge's length encodes the number of incidents in that hour. Select a crime category from the dropdown, then press Play to animate year by year from 2003 to 2025. The stability of Larceny-theft's midday spike is striking — it persists virtually unchanged across two decades. Assault tells a different story: its late-night wedges (10pm–3am) collapse during 2020 as COVID lockdowns shut down San Francisco's nightlife, then slowly recover through 2022–2023. Drug Offense shows perhaps the most dramatic long-term shift — its previously near-circular profile grows increasingly uneven after 2016, reflecting the consolidation of remaining street markets into fewer active hours following cannabis legalisation.]
         </p>
       </div>
 
@@ -707,14 +681,14 @@
 
       <div class="prose reveal">
         <span class="section-label">What it all means</span>
-        <h2>The city never sleeps — but it doesn't always feel the same</h2>
+        <h2>Time is the hidden variable in San Francisco's crime story</h2>
 
         <p>
-          [PLACEHOLDER — Synthesis paragraph. Tie together the three findings: (1) crime in SF is deeply rhythmic — governed by the clock and the calendar; (2) geography matters enormously — a handful of districts absorb a disproportionate share of all reported incidents; (3) the long arc of crime is shaped by external shocks (pandemic, financial crises) and by deliberate policy choices (drug legalization). The data paints a portrait of a city in constant tension between its prosperity and its persistent inequality.]
+          [PLACEHOLDER — Synthesis. The three visualizations together make a single argument: crime in San Francisco is deeply rhythmic. The hour of the day is one of the strongest predictors of both what kind of crime is likely and where in the city it is likely to happen. Larceny-theft — the dominant crime by volume — is a creature of commerce and daylight, following foot traffic and business hours. Assault is a creature of the night economy, following bars, clubs, and the social tensions that accompany them. These are not random distributions; they are the statistical shadow of the city's social life.]
         </p>
 
         <p>
-          [PLACEHOLDER — Closing thought. What does this mean for a visitor, a resident, a policy-maker? Keep it concise and honest about what the data can and cannot tell us. Note the limitation: reported crimes are not all crimes — reporting rates vary by community and crime type, which means the map above is partly a map of who calls the police.]
+          [PLACEHOLDER — Limitations. Note that reported crime is not the same as all crime: under-reporting varies by crime type and neighborhood. Drug offenses in particular are sensitive to policing intensity rather than just underlying behavior. The patterns here reflect what police recorded, not necessarily the full picture. Nonetheless, with over a million incidents across 22 years, the time-of-day signal is consistent enough to be meaningful — and actionable.]
         </p>
       </div>
 
@@ -726,14 +700,14 @@
     ═════════════════════════════════════════════════════════ -->
     <div class="references">
       <div class="page-wrap">
-        <h3>References & Further Reading</h3>
+        <h3>References &amp; Further Reading</h3>
         <ol>
-          <li>San Francisco Police Department (2024). <em>Incident Reports 2018–Present.</em> DataSF Open Data Portal. <a href="https://data.sfgov.org" target="_blank">data.sfgov.org</a></li>
-          <li>San Francisco Police Department (2024). <em>Incident Reports 2003–2017.</em> DataSF Open Data Portal.</li>
-          <li>[PLACEHOLDER — Add a news source about the Tenderloin / Mission crime patterns, e.g. SF Chronicle investigative piece]</li>
-          <li>[PLACEHOLDER — California Proposition 64 (Adult Use of Marijuana Act, 2016) — official text or reliable explainer]</li>
-          <li>[PLACEHOLDER — Academic or journalism source on COVID's effect on urban crime in US cities]</li>
-          <li>[PLACEHOLDER — Source on Vehicle Theft spike during COVID lockdowns in SF]</li>
+          <li>San Francisco Police Department (2024). <em>Incident Reports 2018–Present.</em> <a href="https://data.sfgov.org" target="_blank">DataSF Open Data Portal</a>.</li>
+          <li>San Francisco Police Department (2024). <em>Incident Reports 2003–2017.</em> <a href="https://data.sfgov.org" target="_blank">DataSF Open Data Portal</a>.</li>
+          <li>[PLACEHOLDER — Routine Activity Theory reference, e.g. Cohen &amp; Felson (1979) or a criminology textbook chapter on time-of-day crime patterns]</li>
+          <li>[PLACEHOLDER — News or research source on the Tenderloin / Mission crime geography, e.g. SF Chronicle or Mission Local reporting]</li>
+          <li>[PLACEHOLDER — Source on COVID-19's effect on nighttime crime and nightlife shutdowns in US cities, 2020–2021]</li>
+          <li>[PLACEHOLDER — California Proposition 64 (Adult Use of Marijuana Act, 2016) and its measured effect on drug offense rates in SF]</li>
           <li>Segel, E. &amp; Heer, J. (2010). <em>Narrative Visualization: Telling Stories with Data.</em> IEEE Transactions on Visualization and Computer Graphics, 16(6).</li>
         </ol>
       </div>
@@ -745,9 +719,12 @@
        FOOTER
   ═══════════════════════════════════════════════════════════════ -->
   <footer>
-    <p>Data from SF Open Data · Visualization by [Your Name] · [Course Name] [Year]</p>
+    <p>
+      Egill Bjarni Gíslason (s252929) &nbsp;&amp;&nbsp; Hlynur Blær Sigurðsson (s253095)<br>
+      Social Data Analysis and Visualization &nbsp;·&nbsp; Technical University of Denmark (DTU) &nbsp;·&nbsp; 2025<br>
+      Data source: <a href="https://data.sfgov.org" target="_blank">DataSF Open Data Portal</a>
+    </p>
   </footer>
-
 
   <!-- ════════════════════════════════════════════════════════════
        SCROLL REVEAL
