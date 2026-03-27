@@ -1,230 +1,768 @@
-<!-- <!DOCTYPE html>
-<html>
-<div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px;
-            padding: 30px; background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 12px; color: white;">
-    <h1 style="margin-top: 0; font-size: 28px;">SF Crime Analysis</h1>
-    <p style="color: #b0b0c0; line-height: 1.6;">
-        An interactive exploration of two decades of crime data in San Francisco —
-        uncovering patterns across time, space, and category.
-    </p>
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <a href="Visualizations/timeofdaydist.png" style="padding: 10px 20px; background: #e94560; color: white;
-           text-decoration: none; border-radius: 6px;">Hourly patterns</a>
-        <a href="Visualizations/Plotly.html" style="padding: 10px 20px; background: #0f3460; color: white;
-           text-decoration: none; border-radius: 6px;">Crime map</a>
-    </div>
-</div>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>SF Crime Story</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>San Francisco's Crime Landscape · A Data Story</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: "Georgia", serif;
-    line-height: 1.7;
-    color: #222;
-    background: #f8f8f8;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-/* HERO SECTION */
-.hero {
-    height: 80vh;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)),
-                url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-}
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.hero h1 {
-    font-size: 48px;
-    margin-bottom: 10px;
-}
+    :root {
+      --ink:        #0f0e0d;
+      --paper:      #f5f0e8;
+      --paper-mid:  #ede7d9;
+      --rule:       #c8bfad;
+      --accent:     #b5281c;
+      --accent-dk:  #8a1d13;
+      --accent-gold:#c9952a;
+      --muted:      #6b6456;
+      --col-width:  680px;
+      --serif: 'Playfair Display', Georgia, serif;
+      --body:  'Source Serif 4', Georgia, serif;
+      --mono:  'JetBrains Mono', monospace;
+    }
 
-.hero p {
-    font-size: 20px;
-    color: #ddd;
-}
+    html { scroll-behavior: smooth; }
 
-/* CONTENT */
-.container {
-    max-width: 800px;
-    margin: auto;
-    padding: 40px 20px;
-}
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 18px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.section {
-    margin-bottom: 80px;
-}
+    /* ── Noise texture overlay ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: .6;
+    }
 
-.section h2 {
-    font-size: 32px;
-    margin-bottom: 10px;
-}
+    /* ── Masthead / banner ──────────────────────────────────────── */
+    .masthead {
+      background-color: var(--ink);
+      color: var(--paper);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-.section p {
-    font-size: 18px;
-    color: #444;
-}
+    .masthead::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(90deg,
+        var(--accent) 0, var(--accent) 60%, var(--accent-gold) 60%, var(--accent-gold) 100%);
+      background-size: 120px 4px;
+    }
 
-/* CHART PLACEHOLDER */
-.chart {
-    margin: 30px 0;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    text-align: center;
-}
+    .masthead-eyebrow {
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
 
-/* BUTTON */
-.button {
-    display: inline-block;
-    padding: 12px 24px;
-    background: #e63946;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    margin-top: 20px;
-}
+    .masthead-title {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 7vw, 5.2rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      margin-bottom: 1rem;
+    }
 
-/* FULL WIDTH SECTION */
-.full-width {
-    width: 100%;
-    background: #111;
-    color: white;
-    padding: 60px 20px;
-    text-align: center;
-}
+    .masthead-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
 
-.full-width h2 {
-    font-size: 36px;
-}
+    .masthead-sub {
+      font-family: var(--body);
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: #b0a898;
+      max-width: 520px;
+      margin: 0 auto 1.8rem;
+    }
 
-/* FOOTER */
-.footer {
-    text-align: center;
-    padding: 40px;
-    font-size: 14px;
-    color: #888;
-}
-</style>
+    .masthead-meta {
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #776e63;
+      border-top: 1px solid #2a2825;
+      padding-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .masthead-meta span b { color: #c8bfad; }
+
+    /* ── Page layout ────────────────────────────────────────────── */
+    .page-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── Rule ornament ──────────────────────────────────────────── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 3rem 0 2.5rem;
+      color: var(--rule);
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; height: 1px; background: var(--rule);
+    }
+    .ornament-inner {
+      font-family: var(--mono);
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── Section headers ────────────────────────────────────────── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .6rem;
+      display: block;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+      margin-bottom: 1.2rem;
+    }
+
+    h3 {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 2rem 0 .8rem;
+    }
+
+    /* ── Body copy ──────────────────────────────────────────────── */
+    .prose {
+      max-width: var(--col-width);
+      margin: 0 auto;
+    }
+
+    .prose p {
+      margin-bottom: 1.4rem;
+      color: #1e1c19;
+    }
+
+    /* Drop cap on first paragraph of article */
+    .drop-cap::first-letter {
+      font-family: var(--serif);
+      font-size: 4.5em;
+      font-weight: 900;
+      float: left;
+      line-height: .82;
+      margin: .06em .12em 0 0;
+      color: var(--accent);
+    }
+
+    /* ── Pull quote ──────────────────────────────────────────────── */
+    .pull-quote {
+      border-left: 4px solid var(--accent);
+      padding: 1.2rem 1.8rem;
+      margin: 2.5rem 0;
+      background: var(--paper-mid);
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--ink);
+      position: relative;
+    }
+    .pull-quote::before {
+      content: '\201C';
+      position: absolute;
+      top: -.4rem; left: .8rem;
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--accent);
+      opacity: .25;
+      font-family: var(--serif);
+    }
+
+    /* ── Data callout numbers ───────────────────────────────────── */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      margin: 3rem 0;
+    }
+    .stat-box {
+      background: var(--paper);
+      padding: 1.4rem 1.2rem;
+      text-align: center;
+    }
+    .stat-box .num {
+      font-family: var(--serif);
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+    }
+    .stat-box .label {
+      font-family: var(--mono);
+      font-size: .65rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .4rem;
+      display: block;
+    }
+
+    /* ── Figure / visualization containers ─────────────────────── */
+    .figure-wrap {
+      margin: 3.5rem 0;
+    }
+
+    .figure-number {
+      font-family: var(--mono);
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .5rem;
+      display: block;
+    }
+
+    /* Static image placeholder */
+    .fig-static {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--paper-mid);
+      border: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative grid lines on placeholder */
+    .fig-static::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--rule) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: .35;
+    }
+
+    .fig-placeholder-icon {
+      font-size: 2.5rem;
+      margin-bottom: .8rem;
+      position: relative;
+    }
+
+    .fig-placeholder-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+      position: relative;
+      text-align: center;
+      margin-bottom: .4rem;
+    }
+
+    .fig-placeholder-hint {
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .08em;
+      color: var(--muted);
+      position: relative;
+      text-align: center;
+    }
+
+    /* Map placeholder — taller */
+    .fig-map {
+      aspect-ratio: 4/3;
+    }
+
+    /* Iframe for interactive plots */
+    .fig-iframe {
+      width: 100%;
+      height: 520px;
+      border: 1px solid var(--rule);
+      background: var(--paper-mid);
+      display: block;
+    }
+
+    .fig-caption {
+      margin-top: 1rem;
+      padding-top: .8rem;
+      border-top: 1px solid var(--rule);
+      font-size: .88rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .fig-caption b {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Badge for chart type */
+    .chart-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: var(--paper);
+      padding: .25em .6em;
+      margin-bottom: .6rem;
+    }
+    .chart-badge.badge-map    { background: #1a4a6e; }
+    .chart-badge.badge-interactive { background: #2d6a4f; }
+    .chart-badge.badge-static { background: var(--accent-dk); }
+
+    /* ── Colour swatch reference ─────────────────────────────────── */
+    .color-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .8rem;
+      font-family: var(--mono);
+    }
+    .swatch-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── References ──────────────────────────────────────────────── */
+    .references {
+      background: var(--paper-mid);
+      border-top: 3px solid var(--ink);
+      padding: 2.5rem 2rem;
+      margin-top: 4rem;
+    }
+    .references h3 {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .references ol {
+      padding-left: 1.2rem;
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .references ol li { margin-bottom: .5rem; }
+    .references a { color: var(--accent); text-decoration: underline; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink);
+      color: #776e63;
+      text-align: center;
+      padding: 2rem;
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Animations ──────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .masthead-title  { animation: fadeUp .7s ease both; }
+    .masthead-sub    { animation: fadeUp .7s .12s ease both; }
+    .masthead-meta   { animation: fadeUp .7s .22s ease both; }
+
+    /* Scroll-reveal via Intersection Observer */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .page-wrap { padding: 0 1.2rem; }
+      .stat-strip { grid-template-columns: 1fr 1fr; }
+      .fig-iframe { height: 380px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- HERO -->
-<div class="hero">
-    <div>
-        <h1>20 Years of Crime in San Francisco</h1>
-        <p>A data story about how time, place, and behavior shape crime</p>
+  <!-- ════════════════════════════════════════════════════════════
+       MASTHEAD
+  ═══════════════════════════════════════════════════════════════ -->
+  <header class="masthead">
+    <p class="masthead-eyebrow">Data Investigation · San Francisco Crime 2003–2026</p>
+    <h1 class="masthead-title">
+      After Dark:<br><em>Who Pays the Price</em><br>in San Francisco?
+    </h1>
+    <p class="masthead-sub">
+      Two decades of police data reveal how crime ebbs and flows with the city's rhythms — and who bears the heaviest burden when night falls.
+    </p>
+    <div class="masthead-meta">
+      <span><b>Source</b> SF Open Data / DataSF</span>
+      <span><b>Period</b> Jan 2003 – Mar 2026</span>
+      <span><b>Incidents</b> ~1.4 M records</span>
+      <span><b>Categories</b> 8 crime types</span>
     </div>
-</div>
+  </header>
 
-<div class="container">
 
-    <!-- INTRO -->
-    <div class="section">
-        <p>
-            Over the past two decades, San Francisco has changed dramatically.
-            But crime hasn’t simply increased or decreased — it has evolved.
-            Different crimes follow different patterns across time and space.
-        </p>
-    </div>
+  <!-- ════════════════════════════════════════════════════════════
+       INTRODUCTION
+  ═══════════════════════════════════════════════════════════════ -->
+  <main>
+    <div class="page-wrap">
 
-    <!-- SECTION 1 -->
-    <div class="section">
-        <h2>The Big Picture</h2>
-        <p>
-            Looking at total crime over time reveals long-term trends,
-            but also masks important differences between crime types.
+      <div class="ornament"><span class="ornament-inner">Introduction</span></div>
+
+      <div class="prose reveal">
+        <span class="section-label">Setting the scene</span>
+        <h2>San Francisco by the numbers</h2>
+
+        <p class="drop-cap">
+          [PLACEHOLDER — Introduce the dataset here. Explain that the data comes from the San Francisco Police Department's public incident reports, available via DataSF. Note the time span (2003–2026), the eight crime categories studied (Assault, Fraud, Burglary, Vandalism, Larceny-theft, Vehicle Theft, Drug Offense, Arson), and why these were selected. Keep it to 2–3 sentences so a general reader immediately understands what they're looking at.]
         </p>
 
-        <div class="chart">
-            <!-- INSERT CHART -->
-            <p>[Line chart: total crimes over time]</p>
+        <p>
+          [PLACEHOLDER — Briefly frame the stakes. San Francisco is one of the most data-transparent cities in the US. With over a million reported incidents spanning two decades, the dataset captures the city's turbulent highs — the tech booms, the pandemic lockdowns, the homelessness crisis — through the lens of crime. One or two sentences on why crime data matters as a proxy for urban health.]
+        </p>
+      </div>
+
+      <!-- Key stats strip -->
+      <div class="stat-strip reveal">
+        <div class="stat-box">
+          <span class="num">~1.4M</span>
+          <span class="label">Total Incidents</span>
         </div>
-    </div>
-
-    <!-- SECTION 2 -->
-    <div class="section">
-        <h2>Not All Crime is the Same</h2>
-        <p>
-            While some crimes decline, others rise. Each category tells
-            a different story about the city.
-        </p>
-
-        <div class="chart">
-            <p>[Stacked area chart: crime categories]</p>
+        <div class="stat-box">
+          <span class="num">#1</span>
+          <span class="label">Larceny-theft</span>
         </div>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section">
-        <h2>When Crime Happens</h2>
-        <p>
-            Crime follows a daily rhythm. Some offenses cluster at night,
-            while others occur during the day.
-        </p>
-
-        <div class="chart">
-            <p>[Heatmap: weekday × hour]</p>
+        <div class="stat-box">
+          <span class="num">23 yrs</span>
+          <span class="label">Data Span</span>
         </div>
-    </div>
-
-</div>
-
-<!-- FULL WIDTH MAP SECTION -->
-<div class="full-width">
-    <h2>Where Crime Happens</h2>
-    <p>Explore crime across San Francisco neighborhoods</p>
-
-    <a href="plotly.html" class="button" target="_blank">
-        Open Interactive Crime Map
-    </a>
-</div>
-
-<div class="container">
-
-    <!-- SECTION 4 -->
-    <div class="section">
-        <h2>A Closer Look</h2>
-        <p>
-            Some crime types show surprising patterns when examined closely.
-            For example, vehicle theft has followed a different trajectory
-            than other crimes.
-        </p>
-
-        <div class="chart">
-            <p>[Deep dive chart]</p>
+        <div class="stat-box">
+          <span class="num">10+</span>
+          <span class="label">Districts Covered</span>
         </div>
-    </div>
+      </div>
 
-    <!-- CONCLUSION -->
-    <div class="section">
-        <h2>Conclusion</h2>
+
+      <!-- ══ SECTION 1 ══════════════════════════════════════════ -->
+      <div class="ornament reveal"><span class="ornament-inner">Section 01 · The Rhythm</span></div>
+
+      <div class="prose reveal">
+        <span class="section-label">When does crime happen?</span>
+        <h2>A city of two shifts</h2>
+
         <p>
-            Crime in San Francisco is not a single story, but many.
-            Understanding it requires looking at time, place, and type —
-            and how they interact.
+          [PLACEHOLDER — Introduce the central finding: San Francisco's crime landscape splits neatly along the clock. Petty theft (Larceny-theft) dominates daytime hours — peaking between 11am and 3pm, when foot traffic is highest in commercial districts. But as the sun sets, the character of crime shifts. Assault and Vandalism surge after 9pm, reaching their peak between midnight and 2am. This "two-shift" pattern holds consistently across all 23 years of data.]
         </p>
+
+        <p>
+          [PLACEHOLDER — 1–2 sentences connecting to the reader's lived experience: tourists having pockets picked on Market Street at noon vs. the different dangers of walking through the Tenderloin after midnight.]
+        </p>
+
+        <div class="pull-quote">
+          Larceny-theft — the city's most common crime — is overwhelmingly a daytime phenomenon. Assault is overwhelmingly a crime of the night.
+        </div>
+
+        <p>
+          [PLACEHOLDER — Lead the reader into the first visualization. Explain what to look for: the divergence between the warm-colored (daytime) crimes and the cool-colored (nighttime) crimes. One sentence is enough to prime the reader before they see the chart.]
+        </p>
+      </div>
+
+      <!-- ── FIGURE 1 · STATIC CHART ─────────────────────────── -->
+      <div class="figure-wrap reveal">
+        <span class="chart-badge badge-static">Fig. 1 · Static Chart</span>
+
+        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
+          TYPE: Polar bar chart (clock chart) OR overlapping area chart
+
+          RECOMMENDED: A polar bar chart with 24 "hour" wedges, one ring
+          per crime category, showing normalized incident share.
+          Alternatively, a single multi-line chart with hour (0–23) on
+          the x-axis showing each crime category as a line, clearly
+          revealing the bimodal (daytime vs. night) split.
+
+          COLOR SCHEME: Use the same palette throughout all figures.
+          E.g. Larceny-theft → deep navy, Assault → red,
+               Drug Offense → purple, Vehicle Theft → teal.
+
+          WHAT TO HIGHLIGHT:
+            • Larceny-theft peaks sharply around noon–2pm
+            • Assault/Vandalism peak at midnight–2am
+            • Drug offenses are evenly distributed (no clear peak)
+            • Arson has a peculiar 2–4am spike
+
+          EXPORT: plt.savefig('fig1_hourly_crimes.svg', dpi=150,
+                              bbox_inches='tight', facecolor='#f5f0e8')
+        ──────────────────────────────────────────────────────────── -->
+
+        <div class="fig-static">
+          <span class="fig-placeholder-icon">🕐</span>
+          <p class="fig-placeholder-title">Hourly Crime Distribution by Category</p>
+          <p class="fig-placeholder-hint">Replace with fig1_hourly_crimes.svg / .png</p>
+        </div>
+
+        <p class="fig-caption">
+          <b>Figure 1 · The clock of crime.</b>
+          [CAPTION PLACEHOLDER — Each line shows one crime category's share of daily incidents by hour of the day, averaged across 2003–2026. Notice how Larceny-theft (dark navy) dominates the midday hours — when commercial streets are busiest — while Assault (red) spikes sharply after midnight. The divergence between these two lines illustrates San Francisco's "two-shift" crime pattern: opportunistic theft by day, violence by night. Drug Offense (purple) is the exception, spread almost uniformly across the 24-hour cycle.]
+        </p>
+      </div>
+
+      <!-- ══ SECTION 2 ══════════════════════════════════════════ -->
+      <div class="ornament reveal"><span class="ornament-inner">Section 02 · The Map</span></div>
+
+      <div class="prose reveal">
+        <span class="section-label">Where does crime concentrate?</span>
+        <h2>Not all neighborhoods are equal</h2>
+
+        <p>
+          [PLACEHOLDER — Introduce geographic inequality. The Tenderloin, Mission, and Southern districts consistently appear at the top of every crime ranking. But the story isn't simply "bad neighborhoods." The Southern district's high numbers partly reflect the density of SoMa — tech offices, bars, and transit hubs. The Tenderloin reflects decades of under-investment and concentrated poverty. Frame for the reader: the map is not just a crime map, it's a map of the city's unresolved tensions.]
+        </p>
+
+        <p>
+          [PLACEHOLDER — Mention one counterintuitive finding from the map, e.g.: "Despite its reputation, the Richmond district records some of the city's lowest per-capita crime rates — a finding that challenges the perception of uniform danger across San Francisco."]
+        </p>
+      </div>
+
+      <!-- ── FIGURE 2 · MAP ──────────────────────────────────── -->
+      <div class="figure-wrap reveal">
+        <span class="chart-badge badge-map">Fig. 2 · Map</span>
+
+        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
+          OPTION A (recommended): Folium HeatMap — all incidents
+          plotted as a continuous heat layer over a CartoDB Positron
+          basemap. Color scale: light yellow → deep red.
+          Export: m.save('fig2_heatmap.html')
+          Embed: <iframe src="fig2_heatmap.html"> in place of the
+          placeholder below.
+
+          OPTION B: Plotly Choropleth — fill each Police District
+          polygon by total crime count (or rate per 1000 residents).
+          Use SF district GeoJSON (available on DataSF).
+          Hover shows district name, top crime, total count.
+          Color: sequential scale matching the palette.
+          Export: fig.write_html('fig2_choropleth.html')
+
+          WHAT TO HIGHLIGHT:
+            • Southern / Mission / Tenderloin as hotspots
+            • Richmond / Ingleside as low-crime outliers
+            • The Financial District as a daytime-only hotspot
+              (high larceny, low assault)
+
+          EMBED: swap the .fig-static div below for:
+          <iframe src="fig2_heatmap.html" class="fig-iframe"></iframe>
+        ──────────────────────────────────────────────────────────── -->
+
+        <div class="fig-static fig-map">
+          <span class="fig-placeholder-icon">🗺️</span>
+          <p class="fig-placeholder-title">Crime Density Heatmap · San Francisco</p>
+          <p class="fig-placeholder-hint">Replace with &lt;iframe src="fig2_heatmap.html"&gt;</p>
+        </div>
+
+        <p class="fig-caption">
+          <b>Figure 2 · The geography of risk.</b>
+          [CAPTION PLACEHOLDER — The heatmap plots over [X] incidents recorded between 2003 and 2026. Brighter zones indicate higher incident density. The Tenderloin (central), Mission (east), and SoMa (south-east of downtown) form a near-continuous corridor of concentrated crime. By contrast, the western residential neighborhoods — Sunset, Richmond, and the Outer Avenues — remain comparatively quiet throughout the entire period. This geographic persistence, stable across two decades, suggests structural rather than cyclical causes.]
+        </p>
+      </div>
+
+
+      <!-- ══ SECTION 3 ══════════════════════════════════════════ -->
+      <div class="ornament reveal"><span class="ornament-inner">Section 03 · The Long Arc</span></div>
+
+      <div class="prose reveal">
+        <span class="section-label">How has crime evolved over 23 years?</span>
+        <h2>Shocks, shifts, and a city in flux</h2>
+
+        <p>
+          [PLACEHOLDER — Introduce the long-term narrative. Three major shocks reshape the trend lines: (1) the 2008 financial crisis, which correlates with a modest uptick in property crime; (2) the post-2015 tech-boom gentrification, which reshapes which neighborhoods see crime; and (3) the COVID-19 pandemic (2020), which causes the single most dramatic single-year drop in reported crime across almost every category. Explore with the reader which crimes rebounded post-COVID and which didn't.]
+        </p>
+
+        <p>
+          [PLACEHOLDER — Drug offenses deserve special attention. The long-term decline from ~XXXX per year in 2008 to ~XXXX in 2023 tracks closely with California's marijuana decriminalization (Prop 19, 2010) and full legalization (Prop 64, 2016). This is a case where policy visibly bends a crime trend — one of the cleanest cause-and-effect stories in the entire dataset.]
+        </p>
+
+        <div class="pull-quote">
+          The pandemic was, paradoxically, the safest year on San Francisco's streets in over a decade — with one striking exception.
+        </div>
+
+        <p>
+          [PLACEHOLDER — Tease the exception: Vehicle theft and Burglary spiked during lockdowns, as empty offices and parked cars made easy targets. Invite the reader to explore this in the interactive chart below.]
+        </p>
+      </div>
+
+      <!-- ── FIGURE 3 · INTERACTIVE ──────────────────────────── -->
+      <div class="figure-wrap reveal">
+        <span class="chart-badge badge-interactive">Fig. 3 · Interactive Plotly</span>
+
+        <!-- 💡 PLOT IDEA ──────────────────────────────────────────
+          TYPE: Animated bump chart OR indexed line chart
+
+          RECOMMENDED: A Plotly line chart showing annual crime counts
+          for all 8 categories (2003–2026), with:
+            • A range slider at the bottom to zoom into any period
+            • Click-to-highlight individual crime lines
+            • Vertical "event" annotations:
+                2008 → "Financial Crisis"
+                2016 → "Prop 64 (Cannabis)"
+                2020 → "COVID Lockdown"
+                2022 → "Post-pandemic rebound"
+            • Hover tooltip showing exact count, year, % vs previous year
+
+          WHY THIS IS DIFFERENT from Week 6 exercises:
+            → Normalize to INDEX (2003 = 100) so all categories are
+              comparable on the same y-axis scale. This lets the reader
+              directly compare the relative change across crimes that
+              differ by an order of magnitude (Arson ~100/yr vs
+              Larceny-theft ~30,000/yr).
+
+          ALTERNATIVE: Plotly animated scatter: each bubble = 1 crime
+          category, x = drug offenses (proxy for social disorder),
+          y = assaults, bubble size = total crime, animated by year.
+
+          EXPORT: fig.write_html('fig3_interactive.html',
+                                  include_plotlyjs='cdn')
+          EMBED: <iframe src="fig3_interactive.html" class="fig-iframe">
+        ──────────────────────────────────────────────────────────── -->
+
+        <!-- Swap this iframe src once the file is exported -->
+        <div class="fig-static" style="aspect-ratio: 16/8;">
+          <span class="fig-placeholder-icon">📈</span>
+          <p class="fig-placeholder-title">Interactive: Crime Trends 2003–2026 (Index: 2003 = 100)</p>
+          <p class="fig-placeholder-hint">Replace with &lt;iframe src="fig3_interactive.html" class="fig-iframe"&gt;</p>
+        </div>
+        <!-- Once ready, use this instead: -->
+        <!-- <iframe src="fig3_interactive.html" class="fig-iframe" frameborder="0"></iframe> -->
+
+        <p class="fig-caption">
+          <b>Figure 3 · Twenty-three years, eight stories.</b>
+          [CAPTION PLACEHOLDER — Each line shows annual incident counts for one crime category, indexed so that 2003 = 100 (making categories of very different scale directly comparable). Click a category name in the legend to isolate its trend. Use the range slider to zoom into specific periods. Three moments stand out: the slow decline in Drug Offenses following cannabis legalization (accelerating after 2016); the sharp COVID dip across almost all categories in 2020; and the divergence of Vehicle Theft, which uniquely spiked during lockdown as empty streets left cars unattended for days at a time.]
+        </p>
+      </div>
+
+
+      <!-- ══ CONCLUSION ════════════════════════════════════════ -->
+      <div class="ornament reveal"><span class="ornament-inner">Conclusion</span></div>
+
+      <div class="prose reveal">
+        <span class="section-label">What it all means</span>
+        <h2>The city never sleeps — but it doesn't always feel the same</h2>
+
+        <p>
+          [PLACEHOLDER — Synthesis paragraph. Tie together the three findings: (1) crime in SF is deeply rhythmic — governed by the clock and the calendar; (2) geography matters enormously — a handful of districts absorb a disproportionate share of all reported incidents; (3) the long arc of crime is shaped by external shocks (pandemic, financial crises) and by deliberate policy choices (drug legalization). The data paints a portrait of a city in constant tension between its prosperity and its persistent inequality.]
+        </p>
+
+        <p>
+          [PLACEHOLDER — Closing thought. What does this mean for a visitor, a resident, a policy-maker? Keep it concise and honest about what the data can and cannot tell us. Note the limitation: reported crimes are not all crimes — reporting rates vary by community and crime type, which means the map above is partly a map of who calls the police.]
+        </p>
+      </div>
+
+    </div><!-- /page-wrap -->
+
+
+    <!-- ════════════════════════════════════════════════════════
+         REFERENCES
+    ═════════════════════════════════════════════════════════ -->
+    <div class="references">
+      <div class="page-wrap">
+        <h3>References & Further Reading</h3>
+        <ol>
+          <li>San Francisco Police Department (2024). <em>Incident Reports 2018–Present.</em> DataSF Open Data Portal. <a href="https://data.sfgov.org" target="_blank">data.sfgov.org</a></li>
+          <li>San Francisco Police Department (2024). <em>Incident Reports 2003–2017.</em> DataSF Open Data Portal.</li>
+          <li>[PLACEHOLDER — Add a news source about the Tenderloin / Mission crime patterns, e.g. SF Chronicle investigative piece]</li>
+          <li>[PLACEHOLDER — California Proposition 64 (Adult Use of Marijuana Act, 2016) — official text or reliable explainer]</li>
+          <li>[PLACEHOLDER — Academic or journalism source on COVID's effect on urban crime in US cities]</li>
+          <li>[PLACEHOLDER — Source on Vehicle Theft spike during COVID lockdowns in SF]</li>
+          <li>Segel, E. &amp; Heer, J. (2010). <em>Narrative Visualization: Telling Stories with Data.</em> IEEE Transactions on Visualization and Computer Graphics, 16(6).</li>
+        </ol>
+      </div>
     </div>
 
-</div>
+  </main>
 
-<div class="footer">
-    Data source: San Francisco crime dataset (2003–2026)
-</div>
+  <!-- ════════════════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════════════════ -->
+  <footer>
+    <p>Data from SF Open Data · Visualization by [Your Name] · [Course Name] [Year]</p>
+  </footer>
 
+
+  <!-- ════════════════════════════════════════════════════════════
+       SCROLL REVEAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
