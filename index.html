@@ -516,128 +516,20 @@
 
       <!-- ── FIGURE 3 · INTERACTIVE ────────────────────────────── -->
       <div class="figure-wrap reveal">
-        <span class="chart-badge badge-interactive">Fig. 3 · Interactive Plotly</span>
+        <span class="chart-badge badge-map">Fig. 2 · Interactive Map</span>
 
-        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          💡 THREE IDEAS FOR FIG. 3
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-          IDEA A — Animated week-hour heatmap (RECOMMENDED)
-          ─────────────────────────────────────────────────────
-          TYPE: go.Heatmap — a 7×24 grid (weekday × hour).
-          Cell colour = incident count. One frame per year (2018–2023).
-          Controls: crime category dropdown + Play/Pause by year.
-
-          WHY IT'S DIFFERENT:
-            A week-hour heatmap is a genuinely different structure
-            from a line chart or bar chart. It shows two temporal
-            dimensions at once (day-of-week AND hour-of-day), making
-            the "rhythm collapse" of 2020 immediately visible:
-            the Friday/Saturday night red clusters that dominate in
-            2019 almost vanish in 2020 before slowly returning.
-
-          WHAT TO NOTICE:
-            • Assault 2019 → bright Fri/Sat 10pm–2am cells.
-              In 2020 those cells go almost grey.
-            • Larceny-theft has a persistent Mon–Fri midday cluster
-              that dips in 2020 but recovers by 2022.
-            • Drug Offense loses its evening weekday concentration
-              and never fully recovers to pre-COVID levels.
-
-          PYTHON SKETCH:
-          ─────────────────────────────────────────────────────
-          import plotly.graph_objects as go
-          import numpy as np
-
-          years = list(range(2018, 2024))
-          days  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-          hours = list(range(24))
-          init_cat = 'Assault'
-
-          def make_heatmap(cat, year):
-              sub = df[(df['Crime Category']==cat) & (df['Year']==year)]
-              grid = (sub.groupby(['Weekday','HourOfDay']).size()
-                        .unstack(fill_value=0)
-                        .reindex(index=range(7), columns=range(24), fill_value=0))
-              return go.Heatmap(
-                  z=grid.values, x=hours, y=days,
-                  colorscale='YlOrRd', showscale=True,
-                  hovertemplate='%{y} %{x}:00 · %{z} incidents<extra></extra>'
-              )
-
-          frames = [go.Frame(data=[make_heatmap(init_cat, y)], name=str(y))
-                    for y in years]
-          fig = go.Figure(data=[make_heatmap(init_cat, years[0])], frames=frames)
-          # Add category dropdown (updatemenus) + play/pause animation buttons
-          # fig.write_html('Visualizations/fig3_weekhour.html', include_plotlyjs='cdn')
-          ─────────────────────────────────────────────────────
-
-
-          IDEA B — District-level diverging bar chart
-          ─────────────────────────────────────────────────────
-          TYPE: go.Bar with a centre line at 0.
-          x = % change in crime vs baseline, y = Police District.
-          Bars extend right (red) for increases, left (blue) for decreases.
-          Controls: crime category dropdown to switch between
-          Assault / Burglary / Drug Offense / Larceny-theft.
-          Optional: a phase period selector (Initial / Partial / etc.)
-          to compare how the district pattern differed across phases.
-
-          WHY IT'S DIFFERENT:
-            A diverging bar chart directly encodes increase/decrease
-            with directionality, making geographic winners/losers
-            immediately readable. Combined with a dropdown it
-            lets the reader test hypotheses about which districts
-            drove the city-wide patterns in Fig. 1.
-
-          WHAT TO NOTICE:
-            • Southern/Mission districts drive the Larceny-theft drop
-              (emptied commercial cores).
-            • Richmond/Sunset show modest Burglary increases
-              (residential districts where people were home).
-            • Tenderloin's Drug Offense numbers collapse regardless
-              of lockdown phase — policy effect, not just mobility.
-          ─────────────────────────────────────────────────────
-
-
-          IDEA C — Recovery timeline scatter
-          ─────────────────────────────────────────────────────
-          TYPE: go.Scatter with animation by month (2020–2023).
-          x = months since lockdown began, y = % of pre-COVID level.
-          One line/bubble per crime category.
-          Animation shows each category "recovering" at its own pace.
-          Add a horizontal reference line at 100% (full recovery).
-
-          WHY IT'S DIFFERENT:
-            A recovery-rate chart reframes the question from
-            "how much did crime fall?" to "how quickly did it come back?"
-            This reveals that Larceny-theft recovered to baseline
-            fastest (tied to foot traffic), while Drug Offense
-            never recovered — a structural, not temporary, change.
-          ─────────────────────────────────────────────────────
-
-          Once you've built and exported the file, replace the
-          placeholder div below with:
-          <iframe src="Visualizations/fig3_YOUR_NAME.html"
-                  class="fig-iframe" frameborder="0"></iframe>
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-
-        <div class="dev-note">
-          <strong>Developer note · Fig. 3 placeholder — three options above</strong>
-          Recommended: <b>Idea A</b> — Animated 7×24 week-hour heatmap (<code>go.Heatmap</code>) with crime category dropdown and Play/Pause by year.<br>
-          Export with <code>include_plotlyjs='cdn'</code> to keep the file small.<br>
-          Replace this block with <code>&lt;iframe src="Visualizations/fig3_YOUR_NAME.html" class="fig-iframe"&gt;</code>
-        </div>
-
-        <div class="fig-static" style="aspect-ratio:16/9;">
-          <span class="fig-placeholder-icon">📊</span>
-          <p class="fig-placeholder-title">Interactive Chart · To Be Determined</p>
-          <p class="fig-placeholder-hint">See the three ideas in the dev note above</p>
-        </div>
+        <iframe
+          src="Visualizations/fig3_districts.html"
+          class="fig-iframe"
+          frameborder="0"
+          title="Interactive plot showing percentage change in each crime category by district for each restriction phase during COVID-19 in San Francisco"
+        ></iframe>
 
         <p class="fig-caption">
-          <b>Figure 3 · [Title to be added once viz type is chosen].</b>
-          [CAPTION PLACEHOLDER — Describe what the chart shows and what the reader should look for when interacting with it.]
+          <b>Figure 3 · Crime change by district during COVID-19.</b>
+          The plot shows the percentage change in each crime category across different districts in San Francisco during the pandemic. Users can select a specific crime category and time period to view its distribution across districts.
+        </p>
+      </div>
         </p>
       </div>
 
