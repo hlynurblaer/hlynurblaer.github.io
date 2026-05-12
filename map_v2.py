@@ -1,0 +1,1344 @@
+"""
+Iceland Fisheries — Interactive Catch/Value Map with Year Slider
+================================================================
+Generates a single self-contained HTML file with:
+  • Leaflet map + year slider
+  • Intro slideshow driven by slides.py (edit that file to add/remove/reorder slides)
+  • Movement arrows driven by movements.py (edit to define port-to-port flows)
+  • Catch ↔ Value toggle (navbar, always visible)
+  • Annotation boxes driven by annotations.py (highlight ports with notes)
+  • Semi-transparent narrative panel on left during slideshow
+
+Requirements
+------------
+  slides.py                        (slide definitions — title, body, year)
+  movements.py                     (arrow definitions — origin, dest, species, share)
+  annotations.py                   (annotation boxes — port, year, text)
+  afli_data1.csv, afli_data2.csv, afli_data3.csv
+  iceland_towns_coordinates.csv    (columns: town, latitude, longitude)
+  monthly_plots/
+      monthly_catch_YYYY.png
+      monthly_value_YYYY.png
+      top10ports_YYYY.png
+"""
+
+import pandas as pd
+import json
+
+# ── Data loading ──────────────────────────────────────────────────────────────
+df1 = pd.read_csv('afli_data1.csv')
+df2 = pd.read_csv('afli_data2.csv')
+df3 = pd.read_csv('afli_data3.csv')
+combined_df = pd.concat([df1, df2, df3], ignore_index=True)
+
+combined_df.drop(columns=['Unnamed: 0'], inplace=True)
+combined_df.rename(columns={
+    'Afli og aflaverðmæti eftir fisktegund, löndunarhöfn, '
+    'landsvæðum og mánuðum 1982-2024': 'Afli'
+}, inplace=True)
+
+combined_df = combined_df[~combined_df['Löndunarhöfn'].isin([
+    'A.-Þýskaland', 'Bandaríkin', 'Belgía', 'Bretland', 'Danmörk',
+    'Domeniska Lýðveldið', 'Frakkland', 'Færeyjar', 'Grænland', 'Holland',
+    'Írland', 'Japan', 'Kanada', 'Litháen', 'Namibía', 'Noregur', 'Skotland',
+    'Spánn', 'Svíþjóð', 'Tyrkland', 'Þýskaland', 'Önnur löndun',
+    'Domeniska lýðveldið'
+])]
+
+combined_df['Mánuður'] = combined_df['Mánuður'].map({
+    'janúar': 1, 'febrúar': 2, 'mars': 3, 'apríl': 4, 'maí': 5, 'júní': 6,
+    'júlí': 7, 'ágúst': 8, 'september': 9, 'október': 10, 'nóvember': 11,
+    'desember': 12
+})
+
+combined_df['Afli'] = pd.to_numeric(combined_df['Afli'], errors='coerce')
+
+combined_df = (
+    combined_df
+    .pivot_table(
+        index=["Fisktegund", "Löndunarhöfn", "Ár", "Mánuður"],
+        columns="Eining",
+        values="Afli",
+        aggfunc="first"
+    )
+    .reset_index()
+)
+combined_df.columns.name = None
+
+combined_df.rename(columns={
+    'Fisktegund': 'Species', 'Löndunarhöfn': 'Port', 'Ár': 'Year',
+    'Mánuður': 'Month', 'Magn': 'Quantity', 'Verðmæti': 'Value'
+}, inplace=True)
+
+combined_df = combined_df[
+    (combined_df["Quantity"] >= 0) & (combined_df["Value"] >= 0)
+]
+
+top_ports = (
+    combined_df.groupby("Port")["Quantity"]
+    .sum()
+    .sort_values(ascending=False)
+    .head(50)
+    .index.tolist()
+)
+coords = pd.read_csv("iceland_towns_coordinates.csv")
+
+# ── 1. Aggregate Quantity AND Value per Port per Year ─────────────────────────
+port_year = (
+    combined_df[combined_df["Port"].isin(top_ports)]
+    .groupby(["Year", "Port"], as_index=False)[["Quantity", "Value"]]
+    .sum()
+)
+port_year = port_year.merge(coords, left_on="Port", right_on="town", how="inner")
+
+# ── 2. Build JSON blobs ───────────────────────────────────────────────────────
+years = sorted(port_year["Year"].unique().tolist())
+
+data_by_year_catch = {}
+data_by_year_value = {}
+for year in years:
+    yr = port_year[port_year["Year"] == year]
+    data_by_year_catch[str(year)] = [
+        {"port": r["Port"], "lat": round(r["latitude"], 5),
+         "lon": round(r["longitude"], 5), "qty": round(r["Quantity"], 1)}
+        for _, r in yr.iterrows()
+    ]
+    data_by_year_value[str(year)] = [
+        {"port": r["Port"], "lat": round(r["latitude"], 5),
+         "lon": round(r["longitude"], 5), "qty": round(r["Value"], 1)}
+        for _, r in yr.iterrows()
+    ]
+
+# ── 3. Load slide definitions from slides.py ──────────────────────────────────
+import re
+from slides import SLIDES
+
+def _clean(text):
+    """Collapse all internal whitespace/newlines into single spaces."""
+    return re.sub(r'\s+', ' ', text).strip()
+
+# Build an ordered list for the front-end.  Each entry carries:
+#   year       – int or null  (null = intro slide, no map update)
+#   year_index – int or null  (index into YEARS array, for map update)
+#   title, body
+slides_for_js = []
+for s in SLIDES:
+    yr = s["year"]
+    slides_for_js.append({
+        "year":       yr,
+        "year_index": years.index(yr) if yr is not None and yr in years else None,
+        "title":      s["title"],
+        "body":       _clean(s["body"]),
+    })
+
+slides_json = json.dumps(slides_for_js)
+n_ports     = len(top_ports)
+
+# ── 4. Load movement arrows from movements.py ─────────────────────────────────
+from movements import MOVEMENTS
+
+# Build a lookup dict from the coords DataFrame: port name → (lat, lon)
+_coords_lookup = {
+    row["town"]: (round(row["latitude"], 5), round(row["longitude"], 5))
+    for _, row in coords.iterrows()
+}
+
+# Default colour palette per species (used when color is None)
+_species_colours = {}
+_palette = [
+    "#ff5577", "#44dfcf", "#ffb347", "#7ea6ff",
+    "#c084fc", "#34d399", "#f97316", "#60a5fa",
+    "#fb7185", "#a3e635",
+]
+_palette_idx = 0
+
+movements_for_js = []
+for m in MOVEMENTS:
+    origin = m["origin"]
+    dest   = m["destination"]
+    if origin not in _coords_lookup:
+        print(f"⚠  Movement skipped — origin '{origin}' not in coordinates file")
+        continue
+    if dest not in _coords_lookup:
+        print(f"⚠  Movement skipped — destination '{dest}' not in coordinates file")
+        continue
+
+    # Resolve colour
+    colour = m.get("color") or m.get("colour")
+    if not colour:
+        sp = m["species"]
+        if sp not in _species_colours:
+            _species_colours[sp] = _palette[_palette_idx % len(_palette)]
+            _palette_idx += 1
+        colour = _species_colours[sp]
+
+    o_lat, o_lon = _coords_lookup[origin]
+    d_lat, d_lon = _coords_lookup[dest]
+
+    movements_for_js.append({
+        "year":     m["year"],
+        "species":  m["species"],
+        "vessel":   m.get("vessel"),
+        "company":  m.get("company"),
+        "share":    m["share"],
+        "unit":     m["unit"],
+        "origin":   origin,
+        "dest":     dest,
+        "o_lat":    o_lat,
+        "o_lon":    o_lon,
+        "d_lat":    d_lat,
+        "d_lon":    d_lon,
+        "color":    colour,
+    })
+
+movements_json = json.dumps(movements_for_js)
+print(f"  {len(movements_for_js)} movement arrows loaded")
+
+# ── 5. Load annotation boxes from annotations.py ──────────────────────────────
+from annotations import ANNOTATIONS
+
+annotations_for_js = []
+for a in ANNOTATIONS:
+    port = a["port"]
+    if port not in _coords_lookup:
+        print(f"⚠  Annotation skipped — port '{port}' not in coordinates file")
+        continue
+    lat, lon = _coords_lookup[port]
+    annotations_for_js.append({
+        "slide": a["slide"],
+        "port":  port,
+        "lat":   lat,
+        "lon":   lon,
+        "size":  a.get("size", 80),
+    })
+
+annotations_json = json.dumps(annotations_for_js)
+print(f"  {len(annotations_for_js)} annotations loaded")
+
+html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iceland Fisheries — Catch by Port</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+  body {{
+    font-family: 'Outfit', sans-serif;
+    background: #0a0e14;
+    color: #d4dae3;
+    overflow: hidden;
+  }}
+
+  #map {{ width: 100%; height: 100vh; }}
+
+  /* ═══════════════════════════════════════════
+     NAVBAR — clean, minimal
+  ═══════════════════════════════════════════ */
+  .navbar {{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 50px;
+    background: rgba(10,14,20,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+  }}
+
+  .navbar-brand {{
+    font-size: 15px;
+    font-weight: 700;
+    color: #f4f6f9;
+    white-space: nowrap;
+    flex-shrink: 0;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }}
+
+  .navbar-brand .brand-sub {{
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: #6b7a8d;
+    letter-spacing: 0.02em;
+  }}
+
+  .navbar-sep {{
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }}
+
+  .navbar-spacer {{ flex: 1; }}
+
+  /* ── Mode toggle (Catch / Value) ── */
+  .mode-toggle {{
+    display: flex;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 22px;
+    padding: 3px;
+    gap: 2px;
+    flex-shrink: 0;
+  }}
+
+  .mode-btn {{
+    padding: 5px 16px;
+    border-radius: 18px;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+    color: #6b7a8d;
+    background: transparent;
+    white-space: nowrap;
+  }}
+
+  .mode-btn.active-catch {{
+    background: #00d4aa;
+    color: #0a0e14;
+    box-shadow: 0 0 18px rgba(0,212,170,0.3);
+  }}
+
+  .mode-btn.active-value {{
+    background: #ff8a50;
+    color: #0a0e14;
+    box-shadow: 0 0 18px rgba(255,138,80,0.3);
+  }}
+
+  /* ═══════════════════════════════════════════
+     CHARTS — floating on map, stacked vertically
+  ═══════════════════════════════════════════ */
+  .map-charts {{
+    position: fixed;
+    top: 62px;
+    right: 14px;
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 320px;
+    pointer-events: auto;
+  }}
+
+  .map-chart-card {{
+    background: rgba(10,14,20,0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: opacity 0.3s;
+  }}
+
+  .map-chart-card .chart-label {{
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7a8d;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 8px 10px 4px;
+  }}
+
+  .map-chart-card .chart-year-badge {{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #00d4aa;
+    font-weight: 500;
+    float: right;
+    margin-top: -1px;
+  }}
+
+  .map-chart-card img {{
+    width: 100%;
+    display: block;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    cursor: zoom-in;
+    background: #0d1219;
+  }}
+
+  .map-chart-card .chart-missing {{
+    padding: 24px 12px;
+    text-align: center;
+    color: #3d4a5c;
+    font-size: 11px;
+    font-style: italic;
+    display: none;
+  }}
+
+  /* ═══════════════════════════════════════════
+     SLIDESHOW OVERLAY
+  ═══════════════════════════════════════════ */
+  .slideshow-overlay {{
+    position: fixed;
+    top: 50px;
+    left: 0; right: 0; bottom: 0;
+    z-index: 2000;
+    pointer-events: none;
+  }}
+
+  .slideshow-overlay.active {{
+    pointer-events: auto;
+  }}
+
+  /* ── Narrative panel (left side, semi-transparent) ── */
+  .narrative-panel {{
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 380px;
+    height: calc(100vh - 50px);
+    background: linear-gradient(135deg, rgba(10,14,20,0.92) 0%, rgba(10,14,20,0.78) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    z-index: 2100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 36px;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }}
+
+  .narrative-panel.visible {{ opacity: 1; }}
+
+  .narrative-year {{
+    font-size: 80px;
+    font-weight: 800;
+    color: #f4f6f9;
+    letter-spacing: -4px;
+    line-height: 0.9;
+    margin-bottom: 16px;
+  }}
+
+  .narrative-title {{
+    font-size: 22px;
+    font-weight: 600;
+    color: #e0e6ed;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }}
+
+  .narrative-body {{
+    font-size: 14px;
+    color: #8b97a8;
+    line-height: 1.7;
+    max-width: 320px;
+  }}
+
+  .narrative-stats {{
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+    color: #6b7a8d;
+  }}
+
+  .narrative-stats span {{
+    color: #00d4aa;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+  }}
+
+  /* ── Slideshow nav buttons — grouped top-left ── */
+  .slideshow-controls {{
+    position: fixed;
+    top: 64px;
+    left: 400px;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }}
+
+  .slideshow-controls.visible {{ opacity: 1; }}
+
+  .slide-nav-btn {{
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(10,14,20,0.85);
+    backdrop-filter: blur(8px);
+    color: #00d4aa;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }}
+
+  .slide-nav-btn:hover {{
+    background: rgba(0,212,170,0.12);
+    transform: scale(1.06);
+  }}
+
+  .slide-nav-btn:disabled {{
+    opacity: 0.25;
+    cursor: default;
+    transform: none;
+  }}
+
+  .slide-dots {{
+    display: flex;
+    gap: 6px;
+    margin: 0 8px;
+  }}
+
+  .slide-dot {{
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    transition: background 0.3s, transform 0.3s;
+  }}
+
+  .slide-dot.active {{
+    background: #00d4aa;
+    transform: scale(1.35);
+  }}
+
+  .explore-btn {{
+    margin-left: 10px;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,212,170,0.3);
+    background: rgba(0,212,170,0.1);
+    color: #00d4aa;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }}
+
+  .explore-btn.visible {{
+    opacity: 1;
+    pointer-events: auto;
+  }}
+
+  .explore-btn:hover {{
+    background: rgba(0,212,170,0.2);
+    transform: scale(1.03);
+  }}
+
+  /* ═══════════════════════════════════════════
+     INTERACTIVE CONTROLS (slider page)
+  ═══════════════════════════════════════════ */
+  .controls {{
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(10,14,20,0.95) 30%);
+    padding: 40px 40px 28px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+  }}
+
+  .controls.visible {{
+    opacity: 1;
+    pointer-events: auto;
+  }}
+
+  .controls-inner {{
+    max-width: 900px;
+    margin: 0 auto;
+  }}
+
+  .year-display {{
+    font-size: 52px;
+    font-weight: 800;
+    color: #00d4aa;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }}
+
+  .stats {{
+    font-size: 13px;
+    color: #6b7a8d;
+    margin-bottom: 16px;
+  }}
+
+  .stats span {{
+    color: #d4dae3;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }}
+
+  input[type="range"] {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }}
+
+  input[type="range"]::-webkit-slider-thumb {{
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #00d4aa;
+    border: 3px solid #0a0e14;
+    box-shadow: 0 0 16px rgba(0,212,170,0.4);
+    cursor: grab;
+  }}
+
+  input[type="range"]::-moz-range-thumb {{
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #00d4aa;
+    border: 3px solid #0a0e14;
+    box-shadow: 0 0 16px rgba(0,212,170,0.4);
+    cursor: grab;
+  }}
+
+  .year-ticks {{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #3d4a5c;
+  }}
+
+  /* ═══════════════════════════════════════════
+     PLAY BUTTON
+  ═══════════════════════════════════════════ */
+  .play-btn {{
+    position: fixed;
+    bottom: 120px;
+    right: 40px;
+    z-index: 1001;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: #00d4aa;
+    color: #0a0e14;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(0,212,170,0.3);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+  }}
+
+  .play-btn.visible {{
+    opacity: 1;
+    pointer-events: auto;
+  }}
+
+  .play-btn:hover {{
+    transform: scale(1.1);
+    box-shadow: 0 4px 32px rgba(0,212,170,0.5);
+  }}
+
+  /* ═══════════════════════════════════════════
+     LIGHTBOX
+  ═══════════════════════════════════════════ */
+  .chart-lightbox {{
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+  }}
+
+  .chart-lightbox.open {{ display: flex; }}
+
+  .chart-lightbox img {{
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }}
+
+  /* ═══════════════════════════════════════════
+     POPUPS
+  ═══════════════════════════════════════════ */
+  .leaflet-popup-content-wrapper {{
+    background: rgba(10,14,20,0.92);
+    backdrop-filter: blur(12px);
+    color: #d4dae3;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }}
+
+  .leaflet-popup-tip {{
+    background: rgba(10,14,20,0.92);
+    border: 1px solid rgba(255,255,255,0.08);
+  }}
+
+  .leaflet-popup-content {{
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+  }}
+
+  .popup-port {{
+    font-weight: 700;
+    font-size: 15px;
+    color: #f4f6f9;
+    margin-bottom: 4px;
+  }}
+
+  .popup-qty-catch {{ color: #00d4aa; font-weight: 600; }}
+  .popup-qty-value {{ color: #ff8a50; font-weight: 600; }}
+
+  /* ═══════════════════════════════════════════
+     HIGHLIGHT BOXES
+  ═══════════════════════════════════════════ */
+  .annotation-box-wrapper {{
+    background: none !important;
+    border: none !important;
+  }}
+
+  .annotation-box {{
+    position: relative;
+    background: transparent;
+    border: 1.5px solid rgba(120, 200, 255, 0.50);
+    border-radius: 12px;
+    box-shadow: 0 0 18px rgba(120, 200, 255, 0.10),
+                inset 0 0 12px rgba(120, 200, 255, 0.04);
+  }}
+
+  .annotation-star {{
+    position: absolute;
+    top: -8px;
+    left: -6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #7ec8ff;
+    filter: drop-shadow(0 0 5px rgba(120, 200, 255, 0.6));
+    line-height: 1;
+  }}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    Iceland Fisheries
+    <span class="brand-sub" id="navSubtitle">Top {n_ports} ports · showing catch (tonnes)</span>
+  </div>
+
+  <div class="navbar-spacer"></div>
+
+  <!-- Catch / Value toggle -->
+  <div class="mode-toggle">
+    <button class="mode-btn active-catch" id="modeBtnCatch">Catch</button>
+    <button class="mode-btn" id="modeBtnValue">Value</button>
+  </div>
+</nav>
+
+<!-- ── Map ─────────────────────────────────────────────────────────────── -->
+<div id="map"></div>
+
+<!-- ── Charts on map — stacked vertically ──────────────────────────────── -->
+<div class="map-charts" id="mapCharts">
+  <div class="map-chart-card" id="cardCatch">
+    <div class="chart-label">Monthly Catch <span class="chart-year-badge" id="chartYearBadge1"></span></div>
+    <img id="chartImgCatch" src="" alt="Monthly catch">
+    <div class="chart-missing" id="missingCatch">No monthly data for this year</div>
+  </div>
+  <div class="map-chart-card" id="cardValue">
+    <div class="chart-label">Monthly Value <span class="chart-year-badge" id="chartYearBadge2"></span></div>
+    <img id="chartImgValue" src="" alt="Monthly value">
+    <div class="chart-missing" id="missingValue">No monthly data for this year</div>
+  </div>
+  <div class="map-chart-card" id="cardTop10">
+    <div class="chart-label">Top 10 Ports <span class="chart-year-badge" id="chartYearBadge3"></span></div>
+    <img id="chartImgTop10" src="" alt="Top 10 ports">
+  </div>
+</div>
+
+<!-- ── Slideshow UI ─────────────────────────────────────────────────────── -->
+<div class="slideshow-overlay active" id="slideshowOverlay">
+  <!-- Narrative panel (left) -->
+  <div class="narrative-panel visible" id="narrativePanel">
+    <div class="narrative-year" id="narrativeYear"></div>
+    <div class="narrative-title" id="narrativeTitle"></div>
+    <div class="narrative-body" id="narrativeBody"></div>
+    <div class="narrative-stats" id="narrativeStats"></div>
+  </div>
+</div>
+
+<!-- Slideshow controls — top-left, grouped -->
+<div class="slideshow-controls visible" id="slideshowControls">
+  <button class="slide-nav-btn" id="slideLeft" disabled>&#9664;</button>
+  <div class="slide-dots" id="slideDots"></div>
+  <button class="slide-nav-btn" id="slideRight">&#9654;</button>
+  <button class="explore-btn" id="exploreBtn">Explore All Years &rarr;</button>
+</div>
+
+<!-- ── Interactive controls (slider page) ──────────────────────────────── -->
+<button class="play-btn" id="playBtn" title="Animate">&#9654;</button>
+
+<div class="controls" id="controlsPanel">
+  <div class="controls-inner">
+    <div class="year-display" id="yearLabel"></div>
+    <div class="stats" id="statsLabel"></div>
+    <input type="range" id="slider" min="0" max="{len(years)-1}" value="0" step="1">
+    <div class="year-ticks" id="ticks"></div>
+    <button class="explore-btn visible" id="restartSlidesBtn" style="margin-top:14px;">&larr; Back to Story</button>
+  </div>
+</div>
+
+<!-- ── Chart lightbox ───────────────────────────────────────────────────── -->
+<div class="chart-lightbox" id="chartLightbox">
+  <img id="lightboxImg" src="" alt="Expanded chart">
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
+const DATA_CATCH        = {json.dumps(data_by_year_catch)};
+const DATA_VALUE        = {json.dumps(data_by_year_value)};
+const YEARS             = {json.dumps(years)};
+
+// Minimum share (0–1) a port must hold of the year's total to be displayed.
+// Applies to both catch and value modes.  0.01 = 1%.
+const PORT_DISPLAY_THRESHOLD = 0.01;
+
+const SLIDESHOW         = {slides_json};
+const MOVEMENTS         = {movements_json};
+const ANNOTATIONS       = {annotations_json};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentMode   = 'catch';
+let slideshowMode = true;
+let currentSlide  = 0;
+
+// ── Map setup ─────────────────────────────────────────────────────────────────
+const map = L.map('map', {{
+  center: [65.0, -18.5],
+  zoom: 6,
+  zoomControl: false,
+  attributionControl: false
+}});
+
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
+  maxZoom: 12,
+  subdomains: 'abcd'
+}}).addTo(map);
+
+L.control.zoom({{ position: 'topright' }}).addTo(map);
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+let markers         = [];
+let arrowLayer      = [];  // movement arrow polylines + labels
+let annotationLayer = []; // annotation box markers
+
+function formatNum(n) {{
+  return n.toLocaleString('en', {{ maximumFractionDigits: 0 }});
+}}
+
+// ── updateCharts ──────────────────────────────────────────────────────────────
+const MISSING_MONTHLY_YEARS = [1984, 1999];
+
+function updateCharts(year) {{
+  const base = 'monthly_plots/';
+  const isMissing = MISSING_MONTHLY_YEARS.includes(year);
+
+  document.getElementById('chartYearBadge1').textContent = year;
+  document.getElementById('chartYearBadge2').textContent = year;
+  document.getElementById('chartYearBadge3').textContent = year;
+
+  const imgCatch = document.getElementById('chartImgCatch');
+  const imgValue = document.getElementById('chartImgValue');
+  const imgTop10 = document.getElementById('chartImgTop10');
+  const missCatch = document.getElementById('missingCatch');
+  const missValue = document.getElementById('missingValue');
+
+  imgTop10.src = base + 'top10ports_' + year + '.png';
+
+  if (isMissing) {{
+    imgCatch.style.display = 'none';
+    imgValue.style.display = 'none';
+    missCatch.style.display = 'block';
+    missValue.style.display = 'block';
+  }} else {{
+    imgCatch.src = base + 'monthly_catch_' + year + '.png';
+    imgValue.src = base + 'monthly_value_' + year + '.png';
+    imgCatch.style.display = 'block';
+    imgValue.style.display = 'block';
+    missCatch.style.display = 'none';
+    missValue.style.display = 'none';
+  }}
+}}
+
+// ── updateMap ─────────────────────────────────────────────────────────────────
+function clearArrows() {{
+  arrowLayer.forEach(item => map.removeLayer(item));
+  arrowLayer = [];
+}}
+
+function drawArrows(year) {{
+  clearArrows();
+  const yearMovements = MOVEMENTS.filter(m => m.year === year);
+  if (!yearMovements.length) return;
+
+  yearMovements.forEach((m, idx) => {{
+    const from = [m.o_lat, m.o_lon];
+    const to   = [m.d_lat, m.d_lon];
+
+    // Curved path: compute a control point offset perpendicular to the line.
+    // Alternate direction and increase magnitude per arrow so overlapping
+    // routes fan out instead of stacking.
+    const midLat = (m.o_lat + m.d_lat) / 2;
+    const midLon = (m.o_lon + m.d_lon) / 2;
+    const dLat   = m.d_lat - m.o_lat;
+    const dLon   = m.d_lon - m.o_lon;
+    const dist   = Math.sqrt(dLat * dLat + dLon * dLon);
+
+    // Base bulge + incremental offset; odd indices curve left, even right
+    const sign      = (idx % 2 === 0) ? 1 : -1;
+    const magnitude = 0.25 + 0.15 * Math.floor(idx / 2);
+    const bulge     = dist * magnitude * sign;
+    const cpLat     = midLat + (-dLon / dist) * bulge;
+    const cpLon     = midLon + ( dLat / dist) * bulge;
+
+    // Sample points along a quadratic Bézier for a smooth arc
+    const arcPts = [];
+    const steps  = 30;
+    for (let i = 0; i <= steps; i++) {{
+      const t  = i / steps;
+      const t1 = 1 - t;
+      const lat = t1*t1*m.o_lat + 2*t1*t*cpLat + t*t*m.d_lat;
+      const lon = t1*t1*m.o_lon + 2*t1*t*cpLon + t*t*m.d_lon;
+      arcPts.push([lat, lon]);
+    }}
+
+    // Draw the arc polyline
+    const line = L.polyline(arcPts, {{
+      color:     m.color,
+      weight:    2.5,
+      opacity:   0.85,
+      dashArray: '8 5',
+    }}).addTo(map);
+    arrowLayer.push(line);
+
+    // Arrowhead at destination: use last two arc points for direction
+    const p1  = arcPts[steps - 1];
+    const p2  = arcPts[steps];
+    const ang = Math.atan2(p2[0] - p1[0], p2[1] - p1[1]);
+    const arrLen = 0.12;
+    const spread = 0.45;
+    const tipLat = p2[0];
+    const tipLon = p2[1];
+    const lLat = tipLat - arrLen * Math.cos(ang - spread);
+    const lLon = tipLon - arrLen * Math.sin(ang - spread);
+    const rLat = tipLat - arrLen * Math.cos(ang + spread);
+    const rLon = tipLon - arrLen * Math.sin(ang + spread);
+
+    const arrow = L.polygon(
+      [[tipLat, tipLon], [lLat, lLon], [rLat, rLon]],
+      {{ color: m.color, fillColor: m.color, fillOpacity: 0.9, weight: 1 }}
+    ).addTo(map);
+    arrowLayer.push(arrow);
+
+    // Label at the arc midpoint
+    const labelLat = arcPts[Math.floor(steps / 2)][0];
+    const labelLon = arcPts[Math.floor(steps / 2)][1];
+    const shareStr = m.share.toLocaleString('en', {{ maximumFractionDigits: 1 }});
+    const labelText = m.species + ' · ' + shareStr + ' ' + m.unit;
+    const tooltipParts = [labelText];
+    if (m.vessel)  tooltipParts.push('Vessel: ' + m.vessel);
+    if (m.company) tooltipParts.push('Company: ' + m.company);
+    tooltipParts.push(m.origin + ' → ' + m.dest);
+
+    const labelIcon = L.divIcon({{
+      className: 'movement-label',
+      html: '<span style="'
+        + 'background:rgba(10,14,20,0.85);'
+        + 'backdrop-filter:blur(8px);'
+        + 'border:1px solid ' + m.color + '44;'
+        + 'color:' + m.color + ';'
+        + 'font-family:Outfit,sans-serif;'
+        + 'font-size:11px;'
+        + 'font-weight:600;'
+        + 'padding:3px 8px;'
+        + 'border-radius:6px;'
+        + 'white-space:nowrap;'
+        + 'pointer-events:auto;'
+        + '">' + labelText + '</span>',
+      iconAnchor: [0, 0],
+    }});
+
+    const labelMarker = L.marker([labelLat, labelLon], {{
+      icon: labelIcon,
+      interactive: true,
+    }}).addTo(map);
+
+    labelMarker.bindTooltip(tooltipParts.join('<br>'), {{
+      direction: 'top',
+      offset: [0, -10],
+    }});
+
+    arrowLayer.push(labelMarker);
+  }});
+}}
+
+// ── Annotation boxes ──────────────────────────────────────────────────────────
+function clearAnnotations() {{
+  annotationLayer.forEach(item => map.removeLayer(item));
+  annotationLayer = [];
+}}
+
+function drawAnnotations(slideIdx) {{
+  clearAnnotations();
+  const slideAnnotations = ANNOTATIONS.filter(a => a.slide === slideIdx);
+  if (!slideAnnotations.length) return;
+
+  slideAnnotations.forEach(a => {{
+    const sz = a.size || 80;
+    const half = sz / 2;
+
+    const icon = L.divIcon({{
+      className: 'annotation-box-wrapper',
+      html: '<div class="annotation-box" style="width:' + sz + 'px;height:' + sz + 'px;">'
+        + '<span class="annotation-star">*</span>'
+        + '</div>',
+      iconSize:   [sz, sz],
+      iconAnchor: [half, half],
+    }});
+
+    const marker = L.marker([a.lat, a.lon], {{
+      icon: icon,
+      interactive: false,
+      zIndexOffset: -100,
+    }}).addTo(map);
+
+    annotationLayer.push(marker);
+  }});
+}}
+
+function updateMap(yearIdx) {{
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  const year     = YEARS[yearIdx];
+  const isCatch  = (currentMode === 'catch');
+  const DATA     = isCatch ? DATA_CATCH : DATA_VALUE;
+  const colour   = isCatch ? '#00d4aa' : '#ff8a50';
+  const unitLong = isCatch ? 'tonnes total' : 'th. ISK total';
+
+  const ports = DATA[String(year)] || [];
+  let totalQty = 0;
+  ports.forEach(p => {{ totalQty += p.qty; }});
+
+  // Largest share any single port holds this year (used to scale bubbles)
+  let maxPct = 0;
+  if (totalQty > 0) {{
+    ports.forEach(p => {{ const s = p.qty / totalQty; if (s > maxPct) maxPct = s; }});
+  }}
+
+  ports.forEach(p => {{
+    // Skip ports below 1% of this year's total
+    const pct = totalQty > 0 ? (p.qty / totalQty) : 0;
+    if (pct < PORT_DISPLAY_THRESHOLD) return;
+
+    // Bubble size is relative to the current year: the port with the
+    // largest share gets the biggest dot.  maxPct is computed above.
+    const f = maxPct > 0 ? (pct / maxPct) : 0;
+    const radius  = Math.max(3, f * 35);
+    const opacity = Math.max(0.3, Math.min(0.85, f * 0.55 + 0.3));
+
+    const circle = L.circleMarker([p.lat, p.lon], {{
+      radius:      radius,
+      color:       colour,
+      weight:      1.5,
+      fillColor:   colour,
+      fillOpacity: opacity
+    }}).addTo(map);
+
+    const qClass = isCatch ? 'popup-qty-catch' : 'popup-qty-value';
+    let displayVal;
+    if (isCatch) {{
+      displayVal = formatNum(p.qty) + ' tonnes';
+    }} else {{
+      const pct = totalQty > 0 ? (p.qty / totalQty * 100) : 0;
+      displayVal = pct.toFixed(1) + '% of total value';
+    }}
+    circle.bindPopup(
+      '<div class="popup-port">' + p.port + '</div>' +
+      '<div class="' + qClass + '">' + displayVal + '</div>'
+    );
+    circle.bindTooltip(p.port + ': ' + displayVal, {{
+      direction: 'top', offset: [0, -radius]
+    }});
+    markers.push(circle);
+  }});
+
+  // Draw movement arrows for this year
+  drawArrows(year);
+
+  // Compute both totals regardless of current mode
+  const catchPorts = DATA_CATCH[String(year)] || [];
+  const valuePorts = DATA_VALUE[String(year)] || [];
+  let totalCatch = 0;
+  let totalValue = 0;
+  catchPorts.forEach(p => {{ totalCatch += p.qty; }});
+  valuePorts.forEach(p => {{ totalValue += p.qty; }});
+
+  document.getElementById('yearLabel').textContent = year;
+  document.getElementById('statsLabel').innerHTML =
+    '<span>' + formatNum(totalCatch) + '</span> tonnes &middot; ' +
+    '<span>' + formatNum(totalValue) + '</span> th. ISK';
+
+  updateCharts(year);
+
+  return {{ totalCatch: totalCatch, totalValue: totalValue }};
+}}
+
+// ── Mode toggle ───────────────────────────────────────────────────────────────
+const modeBtnCatch = document.getElementById('modeBtnCatch');
+const modeBtnValue = document.getElementById('modeBtnValue');
+const navSubtitle  = document.getElementById('navSubtitle');
+
+function setMode(mode) {{
+  currentMode = mode;
+  if (mode === 'catch') {{
+    modeBtnCatch.className = 'mode-btn active-catch';
+    modeBtnValue.className = 'mode-btn';
+    navSubtitle.textContent = 'Top {n_ports} ports \u00b7 showing catch (tonnes)';
+  }} else {{
+    modeBtnCatch.className = 'mode-btn';
+    modeBtnValue.className = 'mode-btn active-value';
+    navSubtitle.textContent = 'Top {n_ports} ports \u00b7 showing value (th. ISK)';
+  }}
+  if (slideshowMode) {{
+    showSlide(currentSlide);
+  }} else {{
+    updateMap(parseInt(slider.value));
+  }}
+}}
+
+modeBtnCatch.addEventListener('click', () => setMode('catch'));
+modeBtnValue.addEventListener('click', () => setMode('value'));
+
+// ── Slideshow ─────────────────────────────────────────────────────────────────
+const slideLeft      = document.getElementById('slideLeft');
+const slideRight     = document.getElementById('slideRight');
+const slideDots      = document.getElementById('slideDots');
+const exploreBtn     = document.getElementById('exploreBtn');
+const overlay        = document.getElementById('slideshowOverlay');
+const narrativePanel = document.getElementById('narrativePanel');
+const slideshowCtrl  = document.getElementById('slideshowControls');
+
+// Build dots
+SLIDESHOW.forEach((_, i) => {{
+  const dot = document.createElement('div');
+  dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+  slideDots.appendChild(dot);
+}});
+
+// Track the last year-index we showed on the map so intro slides
+// don't blank it out.
+let lastYearIdx = 0;
+
+function showSlide(idx) {{
+  currentSlide = idx;
+  const slide = SLIDESHOW[idx];
+
+  // If this slide has a year, update the map; otherwise keep previous state
+  let info;
+  if (slide.year_index !== null) {{
+    lastYearIdx = slide.year_index;
+    info = updateMap(slide.year_index);
+  }} else {{
+    info = updateMap(lastYearIdx);
+  }}
+
+  // Update narrative panel
+  const yearEl = document.getElementById('narrativeYear');
+  if (slide.year !== null) {{
+    yearEl.textContent = slide.year;
+    yearEl.style.display = '';
+  }} else {{
+    yearEl.textContent = '';
+    yearEl.style.display = 'none';
+  }}
+  document.getElementById('narrativeTitle').textContent = slide.title;
+  document.getElementById('narrativeBody').textContent  = slide.body;
+
+  const statsEl = document.getElementById('narrativeStats');
+  if (slide.year !== null) {{
+    statsEl.innerHTML =
+      '<span>' + formatNum(info.totalCatch) + '</span> tonnes &middot; ' +
+      '<span>' + formatNum(info.totalValue) + '</span> th. ISK';
+    statsEl.style.display = '';
+  }} else {{
+    statsEl.style.display = 'none';
+  }}
+
+  // Update dots
+  slideDots.querySelectorAll('.slide-dot').forEach((d, i) => {{
+    d.classList.toggle('active', i === idx);
+  }});
+
+  // Enable/disable nav buttons
+  slideLeft.disabled  = (idx === 0);
+  slideRight.disabled = (idx >= SLIDESHOW.length - 1);
+
+  // Show explore button on last slide
+  exploreBtn.classList.toggle('visible', idx === SLIDESHOW.length - 1);
+
+  // Show annotations tied to this slide
+  drawAnnotations(idx);
+}}
+
+slideLeft.addEventListener('click',  () => {{ if (currentSlide > 0) showSlide(currentSlide - 1); }});
+slideRight.addEventListener('click', () => {{ if (currentSlide < SLIDESHOW.length - 1) showSlide(currentSlide + 1); }});
+
+function exitSlideshow() {{
+  slideshowMode = false;
+  overlay.classList.remove('active');
+  narrativePanel.classList.remove('visible');
+  slideshowCtrl.classList.remove('visible');
+  clearAnnotations();
+
+  document.getElementById('controlsPanel').classList.add('visible');
+  document.getElementById('playBtn').classList.add('visible');
+
+  slider.value = 0;
+  updateMap(0);
+}}
+
+function enterSlideshow() {{
+  // Stop any running animation
+  if (playing) {{ clearInterval(interval); playBtn.innerHTML = '&#9654;'; playing = false; }}
+
+  slideshowMode = true;
+  overlay.classList.add('active');
+  narrativePanel.classList.add('visible');
+  slideshowCtrl.classList.add('visible');
+
+  document.getElementById('controlsPanel').classList.remove('visible');
+  document.getElementById('playBtn').classList.remove('visible');
+
+  showSlide(0);
+}}
+
+exploreBtn.addEventListener('click', exitSlideshow);
+document.getElementById('restartSlidesBtn').addEventListener('click', enterSlideshow);
+
+// ── Slider ────────────────────────────────────────────────────────────────────
+const slider = document.getElementById('slider');
+slider.addEventListener('input', () => updateMap(parseInt(slider.value)));
+
+const ticksEl = document.getElementById('ticks');
+const step    = Math.max(1, Math.floor(YEARS.length / 8));
+for (let i = 0; i < YEARS.length; i += step) {{
+  const span = document.createElement('span');
+  span.textContent = YEARS[i];
+  ticksEl.appendChild(span);
+}}
+if (YEARS.length % step !== 1) {{
+  const span = document.createElement('span');
+  span.textContent = YEARS[YEARS.length - 1];
+  ticksEl.appendChild(span);
+}}
+
+// ── Play / animate ────────────────────────────────────────────────────────────
+let playing  = false;
+let interval = null;
+const playBtn = document.getElementById('playBtn');
+
+playBtn.addEventListener('click', () => {{
+  if (playing) {{
+    clearInterval(interval);
+    playBtn.innerHTML = '&#9654;';
+    playing = false;
+  }} else {{
+    playing = true;
+    playBtn.innerHTML = '&#9646;&#9646;';
+    interval = setInterval(() => {{
+      let v = parseInt(slider.value);
+      v = (v >= YEARS.length - 1) ? 0 : v + 1;
+      slider.value = v;
+      updateMap(v);
+    }}, 600);
+  }}
+}});
+
+// ── Keyboard ──────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {{
+  if (slideshowMode) {{
+    if      (e.key === 'ArrowRight' && currentSlide < SLIDESHOW.length - 1) showSlide(currentSlide + 1);
+    else if (e.key === 'ArrowLeft'  && currentSlide > 0)                        showSlide(currentSlide - 1);
+    else if (e.key === 'Enter' || e.key === 'Escape')                           exitSlideshow();
+  }} else {{
+    const v = parseInt(slider.value);
+    if      (e.key === 'ArrowRight' && v < YEARS.length - 1) {{ slider.value = v + 1; updateMap(v + 1); }}
+    else if (e.key === 'ArrowLeft'  && v > 0)                {{ slider.value = v - 1; updateMap(v - 1); }}
+    else if (e.key === ' ')                                  {{ e.preventDefault(); playBtn.click(); }}
+  }}
+}});
+
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+const lightbox    = document.getElementById('chartLightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+
+document.getElementById('mapCharts').addEventListener('click', (e) => {{
+  if (e.target.tagName === 'IMG') {{
+    lightboxImg.src = e.target.src;
+    lightbox.classList.add('open');
+  }}
+}});
+
+lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+document.addEventListener('keydown', (e) => {{
+  if (e.key === 'Escape') lightbox.classList.remove('open');
+}});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+showSlide(0);
+</script>
+</body>
+</html>"""
+
+# ── 5. Save ────────────────────────────────────────────────────────────────────
+output_path = "iceland_catch_map_slider_v2.html"
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html)
+
+print(f"✓ Saved interactive map → {output_path}")
+print(f"  {len(years)} years ({years[0]}–{years[-1]})")
+print(f"  {len(port_year['Port'].unique())} ports with coordinates")
+print(f"  Open in any browser — use slider, arrow keys, or play button")

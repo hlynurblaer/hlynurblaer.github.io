@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_938fbd03eb6c8fa96d46a5b8cb64b2fe {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_938fbd03eb6c8fa96d46a5b8cb64b2fe" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_938fbd03eb6c8fa96d46a5b8cb64b2fe = L.map(
+                "map_938fbd03eb6c8fa96d46a5b8cb64b2fe",
+                {
+                    center: [65.0, -18.5],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 6,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_552b00fe1567f5c9c59ff2677459156a = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_552b00fe1567f5c9c59ff2677459156a.addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+            var circle_marker_0b4d5b875353182f4820ef115f0e439e = L.circleMarker(
+                [64.3221, -22.075],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3.8769292733178076, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_519216d164bfe7392466dddbe7c0e3c7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6aec85161c90db5d18ad47bec9dcbffe = $(`<div id="html_6aec85161c90db5d18ad47bec9dcbffe" style="width: 100.0%; height: 100.0%;"><b>Akranes</b><br>Catch: 25,027</div>`)[0];
+                popup_519216d164bfe7392466dddbe7c0e3c7.setContent(html_6aec85161c90db5d18ad47bec9dcbffe);
+            
+        
+
+        circle_marker_0b4d5b875353182f4820ef115f0e439e.bindPopup(popup_519216d164bfe7392466dddbe7c0e3c7)
+        ;
+
+        
+    
+    
+            circle_marker_0b4d5b875353182f4820ef115f0e439e.bindTooltip(
+                `<div>
+                     Akranes: 25,027
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f94611022c1fb918b93148a42e5c9523 = L.circleMarker(
+                [65.6835, -18.0878],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2.9246983130315343, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_906af30278c2aa187b24780dc17764dc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_08a266332e87dce81d55f9a03542adc9 = $(`<div id="html_08a266332e87dce81d55f9a03542adc9" style="width: 100.0%; height: 100.0%;"><b>Akureyri</b><br>Catch: 18,880</div>`)[0];
+                popup_906af30278c2aa187b24780dc17764dc.setContent(html_08a266332e87dce81d55f9a03542adc9);
+            
+        
+
+        circle_marker_f94611022c1fb918b93148a42e5c9523.bindPopup(popup_906af30278c2aa187b24780dc17764dc)
+        ;
+
+        
+    
+    
+            circle_marker_f94611022c1fb918b93148a42e5c9523.bindTooltip(
+                `<div>
+                     Akureyri: 18,880
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5a75a0117a94d918dc2f5d5cda3d8965 = L.circleMarker(
+                [66.15, -23.25],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1.9781990178714353, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_00c4bc44d6f736d83a8bb3c57368f396 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fa009acd64ebe2199942e802ad8ed286 = $(`<div id="html_fa009acd64ebe2199942e802ad8ed286" style="width: 100.0%; height: 100.0%;"><b>Bolungarvík</b><br>Catch: 12,770</div>`)[0];
+                popup_00c4bc44d6f736d83a8bb3c57368f396.setContent(html_fa009acd64ebe2199942e802ad8ed286);
+            
+        
+
+        circle_marker_5a75a0117a94d918dc2f5d5cda3d8965.bindPopup(popup_00c4bc44d6f736d83a8bb3c57368f396)
+        ;
+
+        
+    
+    
+            circle_marker_5a75a0117a94d918dc2f5d5cda3d8965.bindTooltip(
+                `<div>
+                     Bolungarvík: 12,770
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a8d176355f4b4755e35953a84178b32f = L.circleMarker(
+                [65.97, -18.53],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2.8281894650962247, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_89385ffc6fbcdbb42db8790d10743972 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_64ae43ef5867bb78b88c2246d715f7a9 = $(`<div id="html_64ae43ef5867bb78b88c2246d715f7a9" style="width: 100.0%; height: 100.0%;"><b>Dalvík</b><br>Catch: 18,257</div>`)[0];
+                popup_89385ffc6fbcdbb42db8790d10743972.setContent(html_64ae43ef5867bb78b88c2246d715f7a9);
+            
+        
+
+        circle_marker_a8d176355f4b4755e35953a84178b32f.bindPopup(popup_89385ffc6fbcdbb42db8790d10743972)
+        ;
+
+        
+    
+    
+            circle_marker_a8d176355f4b4755e35953a84178b32f.bindTooltip(
+                `<div>
+                     Dalvík: 18,257
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6e469f23a80baf8179dbf33a7ce735a0 = L.circleMarker(
+                [64.65, -14.2833],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 0.822881220276669, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_1b5c8ff52015b79184fb669e1485e6c8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_43ee2d2c58b7f047d3417fff26c859d2 = $(`<div id="html_43ee2d2c58b7f047d3417fff26c859d2" style="width: 100.0%; height: 100.0%;"><b>Djúpivogur</b><br>Catch: 5,312</div>`)[0];
+                popup_1b5c8ff52015b79184fb669e1485e6c8.setContent(html_43ee2d2c58b7f047d3417fff26c859d2);
+            
+        
+
+        circle_marker_6e469f23a80baf8179dbf33a7ce735a0.bindPopup(popup_1b5c8ff52015b79184fb669e1485e6c8)
+        ;
+
+        
+    
+    
+            circle_marker_6e469f23a80baf8179dbf33a7ce735a0.bindTooltip(
+                `<div>
+                     Djúpivogur: 5,312
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_28ee27c961bf757fbbf8048ea91e8e96 = L.circleMarker(
+                [65.07, -14.02],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.760896618317576, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_e15c347bffd0c0578265eadb4fbf7f65 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e0c01ae7d49fe88b4c8bfd567ecb9ed5 = $(`<div id="html_e0c01ae7d49fe88b4c8bfd567ecb9ed5" style="width: 100.0%; height: 100.0%;"><b>Eskifjörður</b><br>Catch: 95,287</div>`)[0];
+                popup_e15c347bffd0c0578265eadb4fbf7f65.setContent(html_e0c01ae7d49fe88b4c8bfd567ecb9ed5);
+            
+        
+
+        circle_marker_28ee27c961bf757fbbf8048ea91e8e96.bindPopup(popup_e15c347bffd0c0578265eadb4fbf7f65)
+        ;
+
+        
+    
+    
+            circle_marker_28ee27c961bf757fbbf8048ea91e8e96.bindTooltip(
+                `<div>
+                     Eskifjörður: 95,287
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_feea0a70fb87b0f4e4ae250322e55fa9 = L.circleMarker(
+                [64.93, -13.87],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.50513009847104, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_051e5faac1ae9367d70a76e193b5f244 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ce8986171467c7ddf67bb2ad5434fb72 = $(`<div id="html_ce8986171467c7ddf67bb2ad5434fb72" style="width: 100.0%; height: 100.0%;"><b>Fáskrúðsfjörður</b><br>Catch: 41,993</div>`)[0];
+                popup_051e5faac1ae9367d70a76e193b5f244.setContent(html_ce8986171467c7ddf67bb2ad5434fb72);
+            
+        
+
+        circle_marker_feea0a70fb87b0f4e4ae250322e55fa9.bindPopup(popup_051e5faac1ae9367d70a76e193b5f244)
+        ;
+
+        
+    
+    
+            circle_marker_feea0a70fb87b0f4e4ae250322e55fa9.bindTooltip(
+                `<div>
+                     Fáskrúðsfjörður: 41,993
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2b1310ec361e26619a6876a38bd7f763 = L.circleMarker(
+                [63.84, -22.43],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6.40366413475093, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_cac9b6f1fa4d6465334884f1121426a5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c765f75aaa857dc724aa998235b9f52c = $(`<div id="html_c765f75aaa857dc724aa998235b9f52c" style="width: 100.0%; height: 100.0%;"><b>Grindavík</b><br>Catch: 41,338</div>`)[0];
+                popup_cac9b6f1fa4d6465334884f1121426a5.setContent(html_c765f75aaa857dc724aa998235b9f52c);
+            
+        
+
+        circle_marker_2b1310ec361e26619a6876a38bd7f763.bindPopup(popup_cac9b6f1fa4d6465334884f1121426a5)
+        ;
+
+        
+    
+    
+            circle_marker_2b1310ec361e26619a6876a38bd7f763.bindTooltip(
+                `<div>
+                     Grindavík: 41,338
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_aeef25bc8a4f8716dceaf4f094b9cfdf = L.circleMarker(
+                [64.92, -23.25],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2.267105922204264, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_af882f12caf13ee564b65fdbbf1df9f6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_39f0d35653fb8a1d3309c67da930b0f5 = $(`<div id="html_39f0d35653fb8a1d3309c67da930b0f5" style="width: 100.0%; height: 100.0%;"><b>Grundarfjörður</b><br>Catch: 14,635</div>`)[0];
+                popup_af882f12caf13ee564b65fdbbf1df9f6.setContent(html_39f0d35653fb8a1d3309c67da930b0f5);
+            
+        
+
+        circle_marker_aeef25bc8a4f8716dceaf4f094b9cfdf.bindPopup(popup_af882f12caf13ee564b65fdbbf1df9f6)
+        ;
+
+        
+    
+    
+            circle_marker_aeef25bc8a4f8716dceaf4f094b9cfdf.bindTooltip(
+                `<div>
+                     Grundarfjörður: 14,635
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_280e913ca387c6e7cc5067a3059f6b66 = L.circleMarker(
+                [64.0667, -21.95],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3.4087916513908323, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_a655488952a1eb653a3c3e6dd3384b29 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_efb637e431070fac20375b8a379529f2 = $(`<div id="html_efb637e431070fac20375b8a379529f2" style="width: 100.0%; height: 100.0%;"><b>Hafnarfjörður</b><br>Catch: 22,005</div>`)[0];
+                popup_a655488952a1eb653a3c3e6dd3384b29.setContent(html_efb637e431070fac20375b8a379529f2);
+            
+        
+
+        circle_marker_280e913ca387c6e7cc5067a3059f6b66.bindPopup(popup_a655488952a1eb653a3c3e6dd3384b29)
+        ;
+
+        
+    
+    
+            circle_marker_280e913ca387c6e7cc5067a3059f6b66.bindTooltip(
+                `<div>
+                     Hafnarfjörður: 22,005
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b5e1837b2db59f8044c31b3cba8f4fde = L.circleMarker(
+                [64.25, -15.2],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.086857963141778, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_451680e4743f220f2fc2199a29ae9923 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_11f9944ecdb47d33606fb2e2bed89f32 = $(`<div id="html_11f9944ecdb47d33606fb2e2bed89f32" style="width: 100.0%; height: 100.0%;"><b>Hornafjörður</b><br>Catch: 58,659</div>`)[0];
+                popup_451680e4743f220f2fc2199a29ae9923.setContent(html_11f9944ecdb47d33606fb2e2bed89f32);
+            
+        
+
+        circle_marker_b5e1837b2db59f8044c31b3cba8f4fde.bindPopup(popup_451680e4743f220f2fc2199a29ae9923)
+        ;
+
+        
+    
+    
+            circle_marker_b5e1837b2db59f8044c31b3cba8f4fde.bindTooltip(
+                `<div>
+                     Hornafjörður: 58,659
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_426060bc93ae06c111a90923dd38402f = L.circleMarker(
+                [64.0, -22.56],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.357924414311606, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_e1a9479618bd7cf2a546bbe3d5503c2b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4c6b535da5a22f165187afe8386d7cf5 = $(`<div id="html_4c6b535da5a22f165187afe8386d7cf5" style="width: 100.0%; height: 100.0%;"><b>Keflavík</b><br>Catch: 28,132</div>`)[0];
+                popup_e1a9479618bd7cf2a546bbe3d5503c2b.setContent(html_4c6b535da5a22f165187afe8386d7cf5);
+            
+        
+
+        circle_marker_426060bc93ae06c111a90923dd38402f.bindPopup(popup_e1a9479618bd7cf2a546bbe3d5503c2b)
+        ;
+
+        
+    
+    
+            circle_marker_426060bc93ae06c111a90923dd38402f.bindTooltip(
+                `<div>
+                     Keflavík: 28,132
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_174dbd00fb7170cca3b928c8fb01bca8 = L.circleMarker(
+                [65.15, -13.7],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 30.0, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_f7db18017c2d5a20885ff26a2dd8f0ec = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8c191b645ddc0e0ed0c1caf927aa289d = $(`<div id="html_8c191b645ddc0e0ed0c1caf927aa289d" style="width: 100.0%; height: 100.0%;"><b>Neskaupstaður</b><br>Catch: 193,661</div>`)[0];
+                popup_f7db18017c2d5a20885ff26a2dd8f0ec.setContent(html_8c191b645ddc0e0ed0c1caf927aa289d);
+            
+        
+
+        circle_marker_174dbd00fb7170cca3b928c8fb01bca8.bindPopup(popup_f7db18017c2d5a20885ff26a2dd8f0ec)
+        ;
+
+        
+    
+    
+            circle_marker_174dbd00fb7170cca3b928c8fb01bca8.bindTooltip(
+                `<div>
+                     Neskaupstaður: 193,661
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3da2b462aee6f769816925336223c440 = L.circleMarker(
+                [65.6, -23.9833],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 0.7810555558424257, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_417864d995b366a1224f35cef8a578d9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5e76dc873cc7191df8ad547e7fb70f9b = $(`<div id="html_5e76dc873cc7191df8ad547e7fb70f9b" style="width: 100.0%; height: 100.0%;"><b>Patreksfjörður</b><br>Catch: 5,042</div>`)[0];
+                popup_417864d995b366a1224f35cef8a578d9.setContent(html_5e76dc873cc7191df8ad547e7fb70f9b);
+            
+        
+
+        circle_marker_3da2b462aee6f769816925336223c440.bindPopup(popup_417864d995b366a1224f35cef8a578d9)
+        ;
+
+        
+    
+    
+            circle_marker_3da2b462aee6f769816925336223c440.bindTooltip(
+                `<div>
+                     Patreksfjörður: 5,042
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e5bfae02a89462e2cfeec42ffeb8bef6 = L.circleMarker(
+                [66.45, -15.95],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 0.5076396383370942, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_7f731f2532c58ef15796aa4ae3924504 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a3fe352f04b6a2f941bef4685578affd = $(`<div id="html_a3fe352f04b6a2f941bef4685578affd" style="width: 100.0%; height: 100.0%;"><b>Raufarhöfn</b><br>Catch: 3,277</div>`)[0];
+                popup_7f731f2532c58ef15796aa4ae3924504.setContent(html_a3fe352f04b6a2f941bef4685578affd);
+            
+        
+
+        circle_marker_e5bfae02a89462e2cfeec42ffeb8bef6.bindPopup(popup_7f731f2532c58ef15796aa4ae3924504)
+        ;
+
+        
+    
+    
+            circle_marker_e5bfae02a89462e2cfeec42ffeb8bef6.bindTooltip(
+                `<div>
+                     Raufarhöfn: 3,277
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4b3b1c938e5532de926e9a548d017146 = L.circleMarker(
+                [64.1466, -21.9426],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.535038030372663, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_c1e17dd48b98e9b976d61cd0609ba3f0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_265f9e03a0e5a74a668a487c9e4bbb3c = $(`<div id="html_265f9e03a0e5a74a668a487c9e4bbb3c" style="width: 100.0%; height: 100.0%;"><b>Reykjavík</b><br>Catch: 93,829</div>`)[0];
+                popup_c1e17dd48b98e9b976d61cd0609ba3f0.setContent(html_265f9e03a0e5a74a668a487c9e4bbb3c);
+            
+        
+
+        circle_marker_4b3b1c938e5532de926e9a548d017146.bindPopup(popup_c1e17dd48b98e9b976d61cd0609ba3f0)
+        ;
+
+        
+    
+    
+            circle_marker_4b3b1c938e5532de926e9a548d017146.bindTooltip(
+                `<div>
+                     Reykjavík: 93,829
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_68d0263614a1bcb0c41f6153369cfc90 = L.circleMarker(
+                [65.03, -14.2],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 0.9855365819653931, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_2f91774207aaf32366707e7d4d8d60a9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dde28a2abf8140cbe2761e1268ad25a5 = $(`<div id="html_dde28a2abf8140cbe2761e1268ad25a5" style="width: 100.0%; height: 100.0%;"><b>Reyðarfjörður</b><br>Catch: 6,362</div>`)[0];
+                popup_2f91774207aaf32366707e7d4d8d60a9.setContent(html_dde28a2abf8140cbe2761e1268ad25a5);
+            
+        
+
+        circle_marker_68d0263614a1bcb0c41f6153369cfc90.bindPopup(popup_2f91774207aaf32366707e7d4d8d60a9)
+        ;
+
+        
+    
+    
+            circle_marker_68d0263614a1bcb0c41f6153369cfc90.bindTooltip(
+                `<div>
+                     Reyðarfjörður: 6,362
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8569b07d5a920e6b040a70c00dc4c5f0 = L.circleMarker(
+                [64.76, -23.82],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2.236588678154094, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_ed60c7512b3099145affe146e6ae8fdb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e316897def9ff50e10196484976f20a8 = $(`<div id="html_e316897def9ff50e10196484976f20a8" style="width: 100.0%; height: 100.0%;"><b>Rif</b><br>Catch: 14,438</div>`)[0];
+                popup_ed60c7512b3099145affe146e6ae8fdb.setContent(html_e316897def9ff50e10196484976f20a8);
+            
+        
+
+        circle_marker_8569b07d5a920e6b040a70c00dc4c5f0.bindPopup(popup_ed60c7512b3099145affe146e6ae8fdb)
+        ;
+
+        
+    
+    
+            circle_marker_8569b07d5a920e6b040a70c00dc4c5f0.bindTooltip(
+                `<div>
+                     Rif: 14,438
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e443d8b83f0653dc47f706cb7279bbf9 = L.circleMarker(
+                [64.04, -22.71],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1.5034002716086357, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_61c5958b8ebc749ed2f0488bacfd5b5b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6582c72ddb65df708fa2361a8dacf31f = $(`<div id="html_6582c72ddb65df708fa2361a8dacf31f" style="width: 100.0%; height: 100.0%;"><b>Sandgerði</b><br>Catch: 9,705</div>`)[0];
+                popup_61c5958b8ebc749ed2f0488bacfd5b5b.setContent(html_6582c72ddb65df708fa2361a8dacf31f);
+            
+        
+
+        circle_marker_e443d8b83f0653dc47f706cb7279bbf9.bindPopup(popup_61c5958b8ebc749ed2f0488bacfd5b5b)
+        ;
+
+        
+    
+    
+            circle_marker_e443d8b83f0653dc47f706cb7279bbf9.bindTooltip(
+                `<div>
+                     Sandgerði: 9,705
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a2f3d290a2fb9a8434a88fe0aacf2f0d = L.circleMarker(
+                [65.75, -19.64],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1.7941660943607645, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_75447e6bc01820f513436186c99abcf8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_99d56ffbb108a7e4a29ab0f26a9d3fbd = $(`<div id="html_99d56ffbb108a7e4a29ab0f26a9d3fbd" style="width: 100.0%; height: 100.0%;"><b>Sauðárkrókur</b><br>Catch: 11,582</div>`)[0];
+                popup_75447e6bc01820f513436186c99abcf8.setContent(html_99d56ffbb108a7e4a29ab0f26a9d3fbd);
+            
+        
+
+        circle_marker_a2f3d290a2fb9a8434a88fe0aacf2f0d.bindPopup(popup_75447e6bc01820f513436186c99abcf8)
+        ;
+
+        
+    
+    
+            circle_marker_a2f3d290a2fb9a8434a88fe0aacf2f0d.bindTooltip(
+                `<div>
+                     Sauðárkrókur: 11,582
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4fb68700074f335f959317d81ae3eeb5 = L.circleMarker(
+                [65.26, -14.0],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.616128182752336, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_8d79ec6867462dc8570e79764c841065 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2d1dad81c1025a314abd8f7a5b804a60 = $(`<div id="html_2d1dad81c1025a314abd8f7a5b804a60" style="width: 100.0%; height: 100.0%;"><b>Seyðisfjörður</b><br>Catch: 68,531</div>`)[0];
+                popup_8d79ec6867462dc8570e79764c841065.setContent(html_2d1dad81c1025a314abd8f7a5b804a60);
+            
+        
+
+        circle_marker_4fb68700074f335f959317d81ae3eeb5.bindPopup(popup_8d79ec6867462dc8570e79764c841065)
+        ;
+
+        
+    
+    
+            circle_marker_4fb68700074f335f959317d81ae3eeb5.bindTooltip(
+                `<div>
+                     Seyðisfjörður: 68,531
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0c7446be860166b47a7e0281ed6c694b = L.circleMarker(
+                [66.15, -18.91],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4.658759378501609, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_7bd34eec6ceeda1bc63aff04483ff92e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ce2d7ceb5bba1420729189d46ce5a71d = $(`<div id="html_ce2d7ceb5bba1420729189d46ce5a71d" style="width: 100.0%; height: 100.0%;"><b>Siglufjörður</b><br>Catch: 30,074</div>`)[0];
+                popup_7bd34eec6ceeda1bc63aff04483ff92e.setContent(html_ce2d7ceb5bba1420729189d46ce5a71d);
+            
+        
+
+        circle_marker_0c7446be860166b47a7e0281ed6c694b.bindPopup(popup_7bd34eec6ceeda1bc63aff04483ff92e)
+        ;
+
+        
+    
+    
+            circle_marker_0c7446be860166b47a7e0281ed6c694b.bindTooltip(
+                `<div>
+                     Siglufjörður: 30,074
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5b16795264acd4253df804498891f23b = L.circleMarker(
+                [65.83, -20.3],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2.1399249203505097, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_9b6eaabb68224dfc6371eefc55b4f029 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_164bfb5002f2555976a1e3d1805c7ae3 = $(`<div id="html_164bfb5002f2555976a1e3d1805c7ae3" style="width: 100.0%; height: 100.0%;"><b>Skagaströnd</b><br>Catch: 13,814</div>`)[0];
+                popup_9b6eaabb68224dfc6371eefc55b4f029.setContent(html_164bfb5002f2555976a1e3d1805c7ae3);
+            
+        
+
+        circle_marker_5b16795264acd4253df804498891f23b.bindPopup(popup_9b6eaabb68224dfc6371eefc55b4f029)
+        ;
+
+        
+    
+    
+            circle_marker_5b16795264acd4253df804498891f23b.bindTooltip(
+                `<div>
+                     Skagaströnd: 13,814
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_364a5f6e47c228ed2218ff7f7be36b75 = L.circleMarker(
+                [63.44, -20.27],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 27.38155849654809, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_f58e96403efb824e66c01bb3856b0333 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b56c23a215c600a77a7f286fafd425bb = $(`<div id="html_b56c23a215c600a77a7f286fafd425bb" style="width: 100.0%; height: 100.0%;"><b>Vestmannaeyjar</b><br>Catch: 176,758</div>`)[0];
+                popup_f58e96403efb824e66c01bb3856b0333.setContent(html_b56c23a215c600a77a7f286fafd425bb);
+            
+        
+
+        circle_marker_364a5f6e47c228ed2218ff7f7be36b75.bindPopup(popup_f58e96403efb824e66c01bb3856b0333)
+        ;
+
+        
+    
+    
+            circle_marker_364a5f6e47c228ed2218ff7f7be36b75.bindTooltip(
+                `<div>
+                     Vestmannaeyjar: 176,758
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_7b3bd3dc09deea16bab9e0a359b21665 = L.circleMarker(
+                [65.76, -14.85],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16.83560448412432, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_b83234b972c3beeb0e26c0c36b94252b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_aa939eca0e85834ba4a19543cc851699 = $(`<div id="html_aa939eca0e85834ba4a19543cc851699" style="width: 100.0%; height: 100.0%;"><b>Vopnafjörður</b><br>Catch: 108,680</div>`)[0];
+                popup_b83234b972c3beeb0e26c0c36b94252b.setContent(html_aa939eca0e85834ba4a19543cc851699);
+            
+        
+
+        circle_marker_7b3bd3dc09deea16bab9e0a359b21665.bindPopup(popup_b83234b972c3beeb0e26c0c36b94252b)
+        ;
+
+        
+    
+    
+            circle_marker_7b3bd3dc09deea16bab9e0a359b21665.bindTooltip(
+                `<div>
+                     Vopnafjörður: 108,680
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4a31ab53e689ea4ed7b23a596374bd96 = L.circleMarker(
+                [66.075, -23.125],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3.3028333014907494, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_4ccd6e885cf1efa155551b849d56f3da = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c52e3032ec67f2911b701bc6994ecba2 = $(`<div id="html_c52e3032ec67f2911b701bc6994ecba2" style="width: 100.0%; height: 100.0%;"><b>Ísafjörður</b><br>Catch: 21,321</div>`)[0];
+                popup_4ccd6e885cf1efa155551b849d56f3da.setContent(html_c52e3032ec67f2911b701bc6994ecba2);
+            
+        
+
+        circle_marker_4a31ab53e689ea4ed7b23a596374bd96.bindPopup(popup_4ccd6e885cf1efa155551b849d56f3da)
+        ;
+
+        
+    
+    
+            circle_marker_4a31ab53e689ea4ed7b23a596374bd96.bindTooltip(
+                `<div>
+                     Ísafjörður: 21,321
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d6302e73db2c5fc0da8de90ceebd6325 = L.circleMarker(
+                [66.07, -18.66],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 0.043064943380443144, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_796e3285643d6ff02795c97b0bf4e8f7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c4e4d00e341b5f7f3ae4757d942fd1c4 = $(`<div id="html_c4e4d00e341b5f7f3ae4757d942fd1c4" style="width: 100.0%; height: 100.0%;"><b>Ólafsfjörður</b><br>Catch: 278</div>`)[0];
+                popup_796e3285643d6ff02795c97b0bf4e8f7.setContent(html_c4e4d00e341b5f7f3ae4757d942fd1c4);
+            
+        
+
+        circle_marker_d6302e73db2c5fc0da8de90ceebd6325.bindPopup(popup_796e3285643d6ff02795c97b0bf4e8f7)
+        ;
+
+        
+    
+    
+            circle_marker_d6302e73db2c5fc0da8de90ceebd6325.bindTooltip(
+                `<div>
+                     Ólafsfjörður: 278
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e29ff3d7fe7773c4ee62f2dda4ab6421 = L.circleMarker(
+                [64.89, -23.71],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1.451505465736519, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_f5721b43d9be4978fef3b7ae82ef5fe7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ce9dcabdb6be2f9c81663e53b1f1c0b6 = $(`<div id="html_ce9dcabdb6be2f9c81663e53b1f1c0b6" style="width: 100.0%; height: 100.0%;"><b>Ólafsvík</b><br>Catch: 9,370</div>`)[0];
+                popup_f5721b43d9be4978fef3b7ae82ef5fe7.setContent(html_ce9dcabdb6be2f9c81663e53b1f1c0b6);
+            
+        
+
+        circle_marker_e29ff3d7fe7773c4ee62f2dda4ab6421.bindPopup(popup_f5721b43d9be4978fef3b7ae82ef5fe7)
+        ;
+
+        
+    
+    
+            circle_marker_e29ff3d7fe7773c4ee62f2dda4ab6421.bindTooltip(
+                `<div>
+                     Ólafsvík: 9,370
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a2a24347a706298862435ecfd7e72f2d = L.circleMarker(
+                [63.86, -21.38],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1.5579285452414269, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_e43bf15cfad1de1b61199bf58dc53d16 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_aa42b94c45887f65b601d8667672ae4c = $(`<div id="html_aa42b94c45887f65b601d8667672ae4c" style="width: 100.0%; height: 100.0%;"><b>Þorlákshöfn</b><br>Catch: 10,057</div>`)[0];
+                popup_e43bf15cfad1de1b61199bf58dc53d16.setContent(html_aa42b94c45887f65b601d8667672ae4c);
+            
+        
+
+        circle_marker_a2a24347a706298862435ecfd7e72f2d.bindPopup(popup_e43bf15cfad1de1b61199bf58dc53d16)
+        ;
+
+        
+    
+    
+            circle_marker_a2a24347a706298862435ecfd7e72f2d.bindTooltip(
+                `<div>
+                     Þorlákshöfn: 10,057
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_476ba0cff9109c7d5c3f4b2a9d848e1e = L.circleMarker(
+                [66.2, -15.3333],
+                {"bubblingMouseEvents": true, "color": "#185FA5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#185FA5", "fillOpacity": 0.7, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 7.187353158354031, "stroke": true, "weight": 3}
+            ).addTo(map_938fbd03eb6c8fa96d46a5b8cb64b2fe);
+        
+    
+        var popup_fa6be1725a47f2b391560f67b799c6d0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5503f6210f18a873b18fed9b1735b11f = $(`<div id="html_5503f6210f18a873b18fed9b1735b11f" style="width: 100.0%; height: 100.0%;"><b>Þórshöfn</b><br>Catch: 46,397</div>`)[0];
+                popup_fa6be1725a47f2b391560f67b799c6d0.setContent(html_5503f6210f18a873b18fed9b1735b11f);
+            
+        
+
+        circle_marker_476ba0cff9109c7d5c3f4b2a9d848e1e.bindPopup(popup_fa6be1725a47f2b391560f67b799c6d0)
+        ;
+
+        
+    
+    
+            circle_marker_476ba0cff9109c7d5c3f4b2a9d848e1e.bindTooltip(
+                `<div>
+                     Þórshöfn: 46,397
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>
